@@ -2,47 +2,103 @@
 /**
  * ddColorTools
  * @version 2.0 (2017-05-22)
- *
+ * 
  * @desc Преобразует цвет в соответствии со смещением по тону, яркости или насыщенности.
- *
+ * 
  * @uses PHP >= 5.6.
- * @uses MODXEvo.snippet.ddGetDocumentField >= 2.4
- *
- * @param $inputColor {string} - Цвет в hex (например: ffffff). @required
- * @param $inputColor_docField {string} - Имя поля (в котором содержится цвет) которое необходимо получить. Default: —.
- * @param $inputColor_docId {integer} - ID документа, поле которого нужно получить. Default: —.
- * @param $offset_h {string} - Смещение цветового тона в градусах [-360;+360]. "+" - прибавить, "-" - отнять, без знака - задать, "abs" - округлить до макс. или мин. значения, "r" - инвертировать. Default: '+0'.
- * @param $offset_s {string} - Смещение насыщенности в процентах [-100;+100]. "+" - прибавить, "-" - отнять, без знака - задать, "abs" - округлить до макс. или мин. значения, "r" - инвертировать. Default: '+0'.
- * @param $offset_b {string} - Смещение яркости в процентах [-100;+100]. "+" - прибавить, "-" - отнять, без знака - задать, "abs" - округлить до макс. или мин. значения, "r" - инвертировать. Default: '+0'.
- * @param $outputFormat {'hex'|'hsb'} - Какой формат цвета возвращать. Default: 'hex'.
- *
+ * @uses (MODX)EvolutionCMS.snippets.ddGetDocumentField >= 2.4
+ * 
+ * @param $inputColor {string} — Цвет в HEX. @required
+ * @example `ffffff`
+ * @example `#ffffff`
+ * @param $inputColor_docField {string} — Имя поля (в котором содержится цвет) которое необходимо получить. Default: —.
+ * @param $inputColor_docId {integer} — ID документа, поле которого нужно получить. Default: —.
+ * @param $offset_h {string} — Смещение цветового тона в градусах [-360;+360]. `+` — прибавить, `-` — отнять, без знака — задать, `abs` — округлить до макс. или мин. значения, `r` — инвертировать. Default: `'+0'`.
+ * @param $offset_s {string} — Смещение насыщенности в процентах [-100;+100]. `+` — прибавить, `-` — отнять, без знака — задать, `abs` — округлить до макс. или мин. значения, `r` — инвертировать. Default: `'+0'`.
+ * @param $offset_b {string} — Смещение яркости в процентах [-100;+100]. `+` — прибавить, `-` — отнять, без знака — задать, `abs` — округлить до макс. или мин. значения, `r` — инвертировать. Default: `'+0'`.
+ * @param $outputFormat {'hex'|'hsb'} — Какой формат цвета возвращать. Default: `'hex'`.
+ * 
  * @copyright 2011–2017 DivanDesign {@link http://www.DivanDesign.biz }
  */
 
 //Если задано имя поля, которое необходимо получить
 if(isset($inputColor_docField)){
-	$inputColor = $modx->runSnippet('ddGetDocumentField', ['id' => $inputColor_docId, 'field' => $inputColor_docField]);
+	$inputColor = $modx->runSnippet(
+		'ddGetDocumentField',
+		[
+			'id' => $inputColor_docId,
+			'field' => $inputColor_docField
+		]
+	);
 }
 
 if(isset($inputColor)){
-	$hsbRange = ['H' => isset($offset_h) ? $offset_h : '+0', 'S' => isset($offset_s) ? $offset_s : '+0', 'B' => isset($offset_b) ? $offset_b : '+0'];
-	$outputFormat = isset($outputFormat) ? $outputFormat : 'hex';
+	$hsbRange = [
+		'H' =>
+			isset($offset_h) ?
+			$offset_h :
+			'+0'
+		,
+		'S' =>
+			isset($offset_s) ?
+			$offset_s :
+			'+0'
+		,
+		'B' =>
+			isset($offset_b) ?
+			$offset_b :
+			'+0'
+	];
 	
-	$hsbMax = ['H' => 360, 'S' => 100, 'B' => 100];
+	$outputFormat =
+		isset($outputFormat) ?
+		$outputFormat :
+		'hex'
+	;
+	
+	$hsbMax = [
+		'H' => 360,
+		'S' => 100,
+		'B' => 100
+	];
 	
 	//Удалим из цвета символ '#'
-	$inputColor = str_replace('#', '', $inputColor);
+	$inputColor = str_replace(
+		'#',
+		'',
+		$inputColor
+	);
 	
 	if(!function_exists('ddHEXtoHSB')){
 		function ddHEXtoHSB($hex){
 			//Получаем цвета в 10чной системе
-			$red = hexdec(substr($hex, 0, 2));
-			$gre = hexdec(substr($hex, 2, 2));
-			$blu = hexdec(substr($hex, 4, 2));
+			$red = hexdec(substr(
+				$hex,
+				0,
+				2
+			));
+			$gre = hexdec(substr(
+				$hex,
+				2,
+				2
+			));
+			$blu = hexdec(substr(
+				$hex,
+				4,
+				2
+			));
 			
 			//Находим максимальное и минимальное значения
-			$max = max($red, $gre, $blu);
-			$min = min($red, $gre, $blu);
+			$max = max(
+				$red,
+				$gre,
+				$blu
+			);
+			$min = min(
+				$red,
+				$gre,
+				$blu
+			);
 			
 			$hsb = [];
 			//Вычисляем яркость (от 0 до 100)
@@ -134,15 +190,33 @@ if(isset($inputColor)){
 	//Преобразуем цвет в HSB
 	$hsb = ddHEXtoHSB($inputColor);
 	
-	foreach($hsb AS $key => $val){
-		$sim = preg_replace('/\d/', '', $hsbRange[$key]);
-		$hsbRange[$key] = preg_replace('/\D/', '', $hsbRange[$key]);
+	foreach(
+		$hsb as
+		$key =>
+		$val
+	){
+		$sim = preg_replace(
+			'/\d/',
+			'',
+			$hsbRange[$key]
+		);
+		$hsbRange[$key] = preg_replace(
+			'/\D/',
+			'',
+			$hsbRange[$key]
+		);
 		
 		//Если нужно прибавить
-		if(strpos($sim, '+') !== false){
+		if(strpos(
+			$sim,
+			'+'
+		) !== false){
 			$hsb[$key] += $hsbRange[$key];
 			//Если нужно отнять
-		}else if(strpos($sim, '-') !== false){
+		}else if(strpos(
+			$sim,
+			'-'
+		) !== false){
 			$hsb[$key] -= $hsbRange[$key];
 			//Если нужно приравнять (если есть хоть какое-то число)
 		}else if(strlen($hsbRange[$key]) > 0){
@@ -150,36 +224,65 @@ if(isset($inputColor)){
 		}
 		
 		//Если нужно задать максимальное, либо минимальное значение
-		if(strpos($sim, 'abs') !== false){
+		if(strpos(
+			$sim,
+			'abs'
+		) !== false){
 			//Если меньше 50% — 0, в противном случае — максимальное значение
-			$hsb[$key] = ($hsb[$key] < ($hsbMax[$key] / 2)) ? 0 : $hsbMax[$key];
+			$hsb[$key] =
+				$hsb[$key] < ($hsbMax[$key] / 2) ?
+				0 :
+				$hsbMax[$key]
+			;
 		}
 		
 		//Если нужно инвертировать
-		if(strpos($sim, 'r') !== false){
+		if(strpos(
+			$sim,
+			'r'
+		) !== false){
 			$hsb[$key] = $hsbMax[$key] + (-1 * $hsb[$key]);
 		}
 		
 		//Обрабатываем слишком маленькие значения
-		if($hsb[$key] < 0) $hsb[$key] = $hsbMax[$key] + $hsb[$key];
+		if($hsb[$key] < 0){
+			$hsb[$key] = $hsbMax[$key] + $hsb[$key];
+		}
 	}
 	
 	//Обрабатываем слишком большие значения
-	if($hsb['H'] > $hsbMax['H']) $hsb['H'] = $hsb['H'] - $hsbMax['H'];
-	if($hsb['S'] > $hsbMax['S']) $hsb['S'] = $hsbMax['S'];
-	if($hsb['B'] > $hsbMax['B']) $hsb['B'] = $hsbMax['B'];
+	if($hsb['H'] > $hsbMax['H']){
+		$hsb['H'] = $hsb['H'] - $hsbMax['H'];
+	}
+	if($hsb['S'] > $hsbMax['S']){
+		$hsb['S'] = $hsbMax['S'];
+	}
+	if($hsb['B'] > $hsbMax['B']){
+		$hsb['B'] = $hsbMax['B'];
+	}
 	
 	//Результат
 	$result = null;
 	
 	switch($outputFormat){
 		case 'hsb':
-			$result = $hsb['H'] . ',' .$hsb['S'] . ',' .$hsb['B'];
-			break;
+			$result =
+				$hsb['H'] .
+				',' .
+				$hsb['S'] .
+				',' .
+				$hsb['B']
+			;
+		break;
+		
 		case 'hex':
-			$result = implode('', ddHSBtoHEX($hsb));
-			break;
+			$result = implode(
+				'',
+				ddHSBtoHEX($hsb)
+			);
+		break;
 	}
+	
 	return $result;
 }
 ?>
