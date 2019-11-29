@@ -14,9 +14,12 @@
  * @example `#ffffff`
  * @param $inputColor_docField {string} — Имя поля (в котором содержится цвет) которое необходимо получить. Default: —.
  * @param $inputColor_docId {integer} — ID документа, поле которого нужно получить. Default: —.
- * @param $offset_h {string} — Смещение цветового тона в градусах [-360;+360]. `+` — прибавить, `-` — отнять, без знака — задать, `abs` — округлить до макс. или мин. значения, `r` — инвертировать. Default: `'+0'`.
- * @param $offset_s {string} — Смещение насыщенности в процентах [-100;+100]. `+` — прибавить, `-` — отнять, без знака — задать, `abs` — округлить до макс. или мин. значения, `r` — инвертировать. Default: `'+0'`.
- * @param $offset_b {string} — Смещение яркости в процентах [-100;+100]. `+` — прибавить, `-` — отнять, без знака — задать, `abs` — округлить до макс. или мин. значения, `r` — инвертировать. Default: `'+0'`.
+ * @param $offset_h {string_commaSeparated} — Операции смещения цветового тона через запятую. Default: `'+0'`.
+ * @param $offset_h[i] {string} — Смещение цветового тона в градусах [-360;+360]. `+` — прибавить, `-` — отнять, без знака — задать, `abs` — округлить до макс. или мин. значения, `r` — инвертировать. @required
+ * @param $offset_s {string_commaSeparated} — Операции смещения насыщенности через запятую. Default: `'+0'`.
+ * @param $offset_s[i] {string_commaSeparated} — Смещение насыщенности в процентах [-100;+100]. `+` — прибавить, `-` — отнять, без знака — задать, `abs` — округлить до макс. или мин. значения, `r` — инвертировать. @required
+ * @param $offset_b {string_commaSeparated} — Операции смещения яркости через запятую. Default: `'+0'`.
+ * @param $offset_b[i] {string_commaSeparated} — Смещение яркости в процентах [-100;+100]. `+` — прибавить, `-` — отнять, без знака — задать, `abs` — округлить до макс. или мин. значения, `r` — инвертировать. @required
  * @param $result_outputFormat {'hex'|'hsb'} — Какой формат цвета возвращать. Default: `'hex'`.
  * @param $result_tpl {string_chunkName|string} — Chunk to parse result (chunk name or code via `@CODE:` prefix). Availiable placeholders: `[+ddResult+]`, `[+ddH+]`, `[+ddS+]`, `[+ddB+]`. Default: ``.
  * @param $result_tpl_placeholders {stirng_json|string_queryFormated} — Additional data as [JSON](https://en.wikipedia.org/wiki/JSON) or [Query string](https://en.wikipedia.org/wiki/Query_string) has to be passed into `result_tpl`. Default: ``.
@@ -52,18 +55,27 @@ if(isset($inputColor)){
 	$hsbRange = [
 		'H' =>
 			isset($offset_h) ?
-			$offset_h :
-			'+0'
+			explode(
+				',',
+				$offset_h
+			) :
+			['+0']
 		,
 		'S' =>
 			isset($offset_s) ?
-			$offset_s :
-			'+0'
+			explode(
+				',',
+				$offset_s
+			) :
+			['+0']
 		,
 		'B' =>
 			isset($offset_b) ?
-			$offset_b :
-			'+0'
+			explode(
+				',',
+				$offset_b
+			) :
+			['+0']
 	];
 	
 	$result_outputFormat =
@@ -211,58 +223,63 @@ if(isset($inputColor)){
 		$key =>
 		$val
 	){
-		$sim = preg_replace(
-			'/\d/',
-			'',
-			$hsbRange[$key]
-		);
-		$hsbRange[$key] = preg_replace(
-			'/\D/',
-			'',
-			$hsbRange[$key]
-		);
-		
-		//Если нужно прибавить
-		if(strpos(
-			$sim,
-			'+'
-		) !== false){
-			$hsb[$key] += $hsbRange[$key];
-			//Если нужно отнять
-		}else if(strpos(
-			$sim,
-			'-'
-		) !== false){
-			$hsb[$key] -= $hsbRange[$key];
+		foreach (
+			$hsbRange[$key] as
+			$operation
+		){
+			$sim = preg_replace(
+				'/\d/',
+				'',
+				$operation
+			);
+			$operation = preg_replace(
+				'/\D/',
+				'',
+				$operation
+			);
+			
+			//Если нужно прибавить
+			if(strpos(
+				$sim,
+				'+'
+			) !== false){
+				$hsb[$key] += $operation;
+				//Если нужно отнять
+			}else if(strpos(
+				$sim,
+				'-'
+			) !== false){
+				$hsb[$key] -= $operation;
 			//Если нужно приравнять (если есть хоть какое-то число)
-		}else if(strlen($hsbRange[$key]) > 0){
-			$hsb[$key] = $hsbRange[$key];
-		}
-		
-		//Если нужно задать максимальное, либо минимальное значение
-		if(strpos(
-			$sim,
-			'abs'
-		) !== false){
-			//Если меньше 50% — 0, в противном случае — максимальное значение
-			$hsb[$key] =
-				$hsb[$key] < ($hsbMax[$key] / 2) ?
-				0 :
-				$hsbMax[$key]
-			;
-		}
-		
-		//Если нужно инвертировать
-		if(strpos(
-			$sim,
-			'r'
-		) !== false){
-			$hsb[$key] = $hsbMax[$key] + (-1 * $hsb[$key]);
-		}
-		
-		//Обрабатываем слишком маленькие значения
-		if($hsb[$key] < 0){
-			$hsb[$key] = $hsbMax[$key] + $hsb[$key];
+			}else if(strlen($operation) > 0){
+				$hsb[$key] = $operation;
+			}
+			
+			//Если нужно задать максимальное, либо минимальное значение
+			if(strpos(
+				$sim,
+				'abs'
+			) !== false){
+				//Если меньше 50% — 0, в противном случае — максимальное значение
+				$hsb[$key] =
+					$hsb[$key] < ($hsbMax[$key] / 2) ?
+					0 :
+					$hsbMax[$key]
+				;
+			}
+			
+			//Если нужно инвертировать
+			if(strpos(
+				$sim,
+				'r'
+			) !== false){
+				$hsb[$key] = $hsbMax[$key] + (-1 * $hsb[$key]);
+			}
+			
+			//Обрабатываем слишком маленькие значения
+			if($hsb[$key] < 0){
+				$hsb[$key] = $hsbMax[$key] + $hsb[$key];
+			}
 		}
 	}
 	
