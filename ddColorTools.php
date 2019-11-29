@@ -16,10 +16,21 @@
  * @param $offset_h {string} — Смещение цветового тона в градусах [-360;+360]. `+` — прибавить, `-` — отнять, без знака — задать, `abs` — округлить до макс. или мин. значения, `r` — инвертировать. Default: `'+0'`.
  * @param $offset_s {string} — Смещение насыщенности в процентах [-100;+100]. `+` — прибавить, `-` — отнять, без знака — задать, `abs` — округлить до макс. или мин. значения, `r` — инвертировать. Default: `'+0'`.
  * @param $offset_b {string} — Смещение яркости в процентах [-100;+100]. `+` — прибавить, `-` — отнять, без знака — задать, `abs` — округлить до макс. или мин. значения, `r` — инвертировать. Default: `'+0'`.
- * @param $outputFormat {'hex'|'hsb'} — Какой формат цвета возвращать. Default: `'hex'`.
+ * @param $result_outputFormat {'hex'|'hsb'} — Какой формат цвета возвращать. Default: `'hex'`.
  * 
  * @copyright 2011–2017 DivanDesign {@link http://www.DivanDesign.biz }
  */
+
+//Include (MODX)EvolutionCMS.libraries.ddTools
+require_once($modx->getConfig('base_path') . 'assets/libs/ddTools/modx.ddtools.class.php');
+
+//Для обратной совместимости
+extract(ddTools::verifyRenamedParams(
+	$params,
+	[
+		'result_outputFormat' => 'outputFormat'
+	]
+));
 
 //Если задано имя поля, которое необходимо получить
 if(isset($inputColor_docField)){
@@ -50,9 +61,9 @@ if(isset($inputColor)){
 			'+0'
 	];
 	
-	$outputFormat =
-		isset($outputFormat) ?
-		$outputFormat :
+	$result_outputFormat =
+		isset($result_outputFormat) ?
+		$result_outputFormat :
 		'hex'
 	;
 	
@@ -264,7 +275,7 @@ if(isset($inputColor)){
 	//Результат
 	$result = null;
 	
-	switch($outputFormat){
+	switch($result_outputFormat){
 		case 'hsb':
 			$result =
 				$hsb['H'] .
