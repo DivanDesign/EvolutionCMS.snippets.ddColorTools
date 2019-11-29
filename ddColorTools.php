@@ -6,7 +6,8 @@
  * @desc Преобразует цвет в соответствии со смещением по тону, яркости или насыщенности.
  * 
  * @uses PHP >= 5.6.
- * @uses (MODX)EvolutionCMS.snippets.ddGetDocumentField >= 2.4
+ * @uses [(MODX)EvolutionCMS.libraries.ddTools](https://code.divandesign.biz/modx/ddtools) >= 0.28
+ * @uses [(MODX)EvolutionCMS.snippets.ddGetDocumentField](https://code.divandesign.biz/modx/ddgetdocumentfield) >= 2.4
  * 
  * @param $inputColor {string} — Цвет в HEX. @required
  * @example `ffffff`
@@ -17,6 +18,10 @@
  * @param $offset_s {string} — Смещение насыщенности в процентах [-100;+100]. `+` — прибавить, `-` — отнять, без знака — задать, `abs` — округлить до макс. или мин. значения, `r` — инвертировать. Default: `'+0'`.
  * @param $offset_b {string} — Смещение яркости в процентах [-100;+100]. `+` — прибавить, `-` — отнять, без знака — задать, `abs` — округлить до макс. или мин. значения, `r` — инвертировать. Default: `'+0'`.
  * @param $result_outputFormat {'hex'|'hsb'} — Какой формат цвета возвращать. Default: `'hex'`.
+ * @param $result_tpl {string_chunkName|string} — Chunk to parse result (chunk name or code via `@CODE:` prefix). Availiable placeholders: `[+ddResult+]`, `[+ddH+]`, `[+ddS+]`, `[+ddB+]`. Default: ``.
+ * @param $result_tpl_placeholders {stirng_json|string_queryFormated} — Additional data as [JSON](https://en.wikipedia.org/wiki/JSON) or [Query string](https://en.wikipedia.org/wiki/Query_string) has to be passed into `result_tpl`. Default: ``.
+ * @example `{"pladeholder1": "value1", "pagetitle": "My awesome pagetitle!"}`
+ * @example `pladeholder1=value1&pagetitle=My awesome pagetitle!`
  * 
  * @copyright 2011–2017 DivanDesign {@link http://www.DivanDesign.biz }
  */
@@ -292,6 +297,31 @@ if(isset($inputColor)){
 				ddHSBtoHEX($hsb)
 			);
 		break;
+	}
+	
+	if (!empty($result_tpl)){
+		$result = [
+			'ddResult' => $result,
+			'ddH' => $hsb['H'],
+			'ddS' => $hsb['S'],
+			'ddB' => $hsb['B']
+		];
+		
+		//Если есть дополнительные данные
+		if (
+			isset($result_tpl_placeholders) &&
+			trim($result_tpl_placeholders) != ''
+		){
+			$result = array_merge(
+				$result,
+				ddTools::encodedStringToArray($result_tpl_placeholders)
+			);
+		}
+		
+		$result = ddTools::parseText([
+			'text' => $modx->getTpl($result_tpl),
+			'data' => $result
+		]);
 	}
 	
 	return $result;
