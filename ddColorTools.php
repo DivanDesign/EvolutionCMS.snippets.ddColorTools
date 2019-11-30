@@ -7,7 +7,7 @@
  * 
  * @uses PHP >= 5.6.
  * @uses [(MODX)EvolutionCMS.libraries.ddTools](https://code.divandesign.biz/modx/ddtools) >= 0.28
- * @uses [(MODX)EvolutionCMS.snippets.ddGetDocumentField](https://code.divandesign.biz/modx/ddgetdocumentfield) >= 2.4
+ * @uses [(MODX)EvolutionCMS.snippets.ddGetDocumentField](https://code.divandesign.biz/modx/ddgetdocumentfield) >= 2.8
  * 
  * @param $inputColor {string} — Цвет в HEX. @required
  * @example `ffffff`
@@ -45,8 +45,8 @@ if(isset($inputColor_docField)){
 	$inputColor = $modx->runSnippet(
 		'ddGetDocumentField',
 		[
-			'id' => $inputColor_docId,
-			'field' => $inputColor_docField
+			'docId' => $inputColor_docId,
+			'docField' => $inputColor_docField
 		]
 	);
 }
