@@ -18,10 +18,10 @@
  * @param $offset_h[i] {string} — Смещение цветового тона в градусах [-360;+360]. `+` — прибавить, `-` — отнять, без знака — задать, `abs` — округлить до макс. или мин. значения, `r` — инвертировать. @required
  * @param $offset_s {string_commaSeparated} — Операции смещения насыщенности через запятую. Default: `'+0'`.
  * @param $offset_s[i] {string_commaSeparated} — Смещение насыщенности в процентах [-100;+100]. `+` — прибавить, `-` — отнять, без знака — задать, `abs` — округлить до макс. или мин. значения, `r` — инвертировать. @required
- * @param $offset_b {string_commaSeparated} — Операции смещения яркости через запятую. Default: `'+0'`.
- * @param $offset_b[i] {string_commaSeparated} — Смещение яркости в процентах [-100;+100]. `+` — прибавить, `-` — отнять, без знака — задать, `abs` — округлить до макс. или мин. значения, `r` — инвертировать. @required
- * @param $result_outputFormat {'hex'|'hsb'} — Какой формат цвета возвращать. Default: `'hex'`.
- * @param $result_tpl {string_chunkName|string} — Chunk to parse result (chunk name or code via `@CODE:` prefix). Availiable placeholders: `[+ddResult+]`, `[+ddH+]`, `[+ddS+]`, `[+ddB+]`. Default: ``.
+ * @param $offset_l {string_commaSeparated} — Операции смещения яркости через запятую. Default: `'+0'`.
+ * @param $offset_l[i] {string_commaSeparated} — Смещение яркости в процентах [-100;+100]. `+` — прибавить, `-` — отнять, без знака — задать, `abs` — округлить до макс. или мин. значения, `r` — инвертировать. @required
+ * @param $result_outputFormat {'hex'|'hsl'} — Какой формат цвета возвращать. Default: `'hex'`.
+ * @param $result_tpl {string_chunkName|string} — Chunk to parse result (chunk name or code via `@CODE:` prefix). Availiable placeholders: `[+ddResult+]`, `[+ddH+]`, `[+ddS+]`, `[+ddL+]`. Default: ``.
  * @param $result_tpl_placeholders {stirng_json|string_queryFormated} — Additional data as [JSON](https://en.wikipedia.org/wiki/JSON) or [Query string](https://en.wikipedia.org/wiki/Query_string) has to be passed into `result_tpl`. Default: ``.
  * @example `{"pladeholder1": "value1", "pagetitle": "My awesome pagetitle!"}`
  * @example `pladeholder1=value1&pagetitle=My awesome pagetitle!`
@@ -52,7 +52,7 @@ if(isset($inputColor_docField)){
 }
 
 if(isset($inputColor)){
-	$hsbRange = [
+	$hslRange = [
 		'H' =>
 			isset($offset_h) ?
 			explode(
@@ -69,11 +69,11 @@ if(isset($inputColor)){
 			) :
 			['+0']
 		,
-		'B' =>
-			isset($offset_b) ?
+		'L' =>
+			isset($offset_l) ?
 			explode(
 				',',
-				$offset_b
+				$offset_l
 			) :
 			['+0']
 	];
@@ -84,10 +84,10 @@ if(isset($inputColor)){
 		'hex'
 	;
 	
-	$hsbMax = [
+	$hslMax = [
 		'H' => 360,
 		'S' => 100,
-		'B' => 100
+		'L' => 100
 	];
 	
 	//Удалим из цвета символ '#'
@@ -97,8 +97,8 @@ if(isset($inputColor)){
 		$inputColor
 	);
 	
-	if(!function_exists('ddHEXtoHSB')){
-		function ddHEXtoHSB($hex){
+	if(!function_exists('ddHEXtoHSL')){
+		function ddHEXtoHSL($hex){
 			//Получаем цвета в 10чной системе
 			$red = hexdec(substr(
 				$hex,
@@ -128,41 +128,56 @@ if(isset($inputColor)){
 				$blu
 			);
 			
-			$hsb = [];
+			$hsl = [];
 			//Вычисляем яркость (от 0 до 100)
-			$hsb['B'] = round($max * 100 / 255);
+			$hsl['L'] = round(($max + $min) / 2 * 100 / 255);
 			
 			//Если цвет серый
 			if($max == $min){
-				$hsb['S'] = 0;
-				$hsb['H'] = 0;
+				$hsl['S'] = 0;
+				$hsl['H'] = 0;
 			}else{
 				//Вычисляем насыщенность
-				$hsb['S'] = round(100 * ($max - $min) / $max);
+				$hsl['S'] = round(
+					(
+						$hsl['L'] > 50 ?
+						(
+							($max - $min) /
+							(2 * 255 - $max - $min)
+						) :
+						(
+							($max - $min) /
+							($max + $min)
+						)
+					) *
+					100
+				);
+				
 				//Вычисляем тон
 				$hue = 0;
 				$tmpR = ($max - $red) / ($max - $min);
 				$tmpG = ($max - $gre) / ($max - $min);
-				$tmpB = ($max - $blu) / ($max - $min);
+				$tmpL = ($max - $blu) / ($max - $min);
 				
 				if($red == $max){
-					$hue = $tmpB - $tmpG;
+					$hue = $tmpL - $tmpG;
 				}else if($gre == $max){
-					$hue = 2 + $tmpR - $tmpB;
+					$hue = 2 + $tmpR - $tmpL;
 				}else if($blu == $max){
 					$hue = 4 + $tmpG - $tmpR;
 				}
-				$hsb['H'] = (round($hue * 60) + 360) % 360;
+				
+				$hsl['H'] = (round($hue * 60) + 360) % 360;
 			}
 			
-			return $hsb;
+			return $hsl;
 		}
 	}
 	
-	if(!function_exists('ddHSBtoHEX')){
-		function ddHSBtoHEX($hsb){
-			$sat = $hsb['S'];
-			$bri = $hsb['B'];
+	if(!function_exists('ddHSLtoHEX')){
+		function ddHSLtoHEX($hsl){
+			$sat = $hsl['S'];
+			$bri = $hsl['L'];
 			
 			$rgb = [];
 			
@@ -172,7 +187,7 @@ if(isset($inputColor)){
 				$rgb['G'] = $bri;
 				$rgb['B'] = $bri;
 			}else{
-				$hue = ($hsb['H'] + 360) % 360;
+				$hue = ($hsl['H'] + 360) % 360;
 				$hue2 = floor($hue / 60);
 				
 				$dif = ($hue % 60) / 60;
@@ -215,16 +230,16 @@ if(isset($inputColor)){
 		}
 	}
 	
-	//Преобразуем цвет в HSB
-	$hsb = ddHEXtoHSB($inputColor);
+	//Преобразуем цвет в HSL
+	$hsl = ddHEXtoHSL($inputColor);
 	
 	foreach(
-		$hsb as
+		$hsl as
 		$key =>
 		$val
 	){
 		foreach (
-			$hsbRange[$key] as
+			$hslRange[$key] as
 			$operation
 		){
 			$sim = preg_replace(
@@ -243,16 +258,16 @@ if(isset($inputColor)){
 				$sim,
 				'+'
 			) !== false){
-				$hsb[$key] += $operation;
+				$hsl[$key] += $operation;
 				//Если нужно отнять
 			}else if(strpos(
 				$sim,
 				'-'
 			) !== false){
-				$hsb[$key] -= $operation;
+				$hsl[$key] -= $operation;
 			//Если нужно приравнять (если есть хоть какое-то число)
 			}else if(strlen($operation) > 0){
-				$hsb[$key] = $operation;
+				$hsl[$key] = $operation;
 			}
 			
 			//Если нужно задать максимальное, либо минимальное значение
@@ -261,10 +276,10 @@ if(isset($inputColor)){
 				'abs'
 			) !== false){
 				//Если меньше 50% — 0, в противном случае — максимальное значение
-				$hsb[$key] =
-					$hsb[$key] < ($hsbMax[$key] / 2) ?
+				$hsl[$key] =
+					$hsl[$key] < ($hslMax[$key] / 2) ?
 					0 :
-					$hsbMax[$key]
+					$hslMax[$key]
 				;
 			}
 			
@@ -273,45 +288,47 @@ if(isset($inputColor)){
 				$sim,
 				'r'
 			) !== false){
-				$hsb[$key] = $hsbMax[$key] + (-1 * $hsb[$key]);
+				$hsl[$key] = $hslMax[$key] + (-1 * $hsl[$key]);
 			}
 			
 			//Обрабатываем слишком маленькие значения
-			if($hsb[$key] < 0){
-				$hsb[$key] = $hsbMax[$key] + $hsb[$key];
+			if($hsl[$key] < 0){
+				$hsl[$key] = $hslMax[$key] + $hsl[$key];
 			}
 		}
 	}
 	
 	//Обрабатываем слишком большие значения
-	if($hsb['H'] > $hsbMax['H']){
-		$hsb['H'] = $hsb['H'] - $hsbMax['H'];
+	if($hsl['H'] > $hslMax['H']){
+		$hsl['H'] = $hsl['H'] - $hslMax['H'];
 	}
-	if($hsb['S'] > $hsbMax['S']){
-		$hsb['S'] = $hsbMax['S'];
+	if($hsl['S'] > $hslMax['S']){
+		$hsl['S'] = $hslMax['S'];
 	}
-	if($hsb['B'] > $hsbMax['B']){
-		$hsb['B'] = $hsbMax['B'];
+	if($hsl['L'] > $hslMax['L']){
+		$hsl['L'] = $hslMax['L'];
 	}
 	
 	//Результат
 	$result = null;
 	
 	switch($result_outputFormat){
-		case 'hsb':
+		case 'hsl':
 			$result =
-				$hsb['H'] .
+				'hsl(' .
+				$hsl['H'] .
 				',' .
-				$hsb['S'] .
-				',' .
-				$hsb['B']
+				$hsl['S'] .
+				'%,' .
+				$hsl['L'] .
+				'%)'
 			;
 		break;
 		
 		case 'hex':
 			$result = implode(
 				'',
-				ddHSBtoHEX($hsb)
+				ddHSLtoHEX($hsl)
 			);
 		break;
 	}
@@ -319,9 +336,9 @@ if(isset($inputColor)){
 	if (!empty($result_tpl)){
 		$result = [
 			'ddResult' => $result,
-			'ddH' => $hsb['H'],
-			'ddS' => $hsb['S'],
-			'ddB' => $hsb['B']
+			'ddH' => $hsl['H'],
+			'ddS' => $hsl['S'],
+			'ddL' => $hsl['L']
 		];
 		
 		//Если есть дополнительные данные
