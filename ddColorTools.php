@@ -40,6 +40,9 @@ extract(ddTools::verifyRenamedParams(
 	]
 ));
 
+//The snippet must return an empty string even if result is absent
+$snippetResult = '';
+
 //Если задано имя поля, которое необходимо получить
 if(isset($inputColor_docField)){
 	$inputColor = $modx->runSnippet(
@@ -309,12 +312,9 @@ if(isset($inputColor)){
 		$hsl['L'] = $hslMax['L'];
 	}
 	
-	//Результат
-	$result = null;
-	
 	switch($result_outputFormat){
 		case 'hsl':
-			$result =
+			$snippetResult =
 				'hsl(' .
 				$hsl['H'] .
 				',' .
@@ -326,7 +326,7 @@ if(isset($inputColor)){
 		break;
 		
 		case 'hex':
-			$result = implode(
+			$snippetResult = implode(
 				'',
 				ddHSLtoHEX($hsl)
 			);
@@ -334,8 +334,8 @@ if(isset($inputColor)){
 	}
 	
 	if (!empty($result_tpl)){
-		$result = [
-			'ddResult' => $result,
+		$snippetResult = [
+			'ddResult' => $snippetResult,
 			'ddH' => $hsl['H'],
 			'ddS' => $hsl['S'],
 			'ddL' => $hsl['L']
@@ -346,18 +346,18 @@ if(isset($inputColor)){
 			isset($result_tpl_placeholders) &&
 			trim($result_tpl_placeholders) != ''
 		){
-			$result = array_merge(
-				$result,
+			$snippetResult = array_merge(
+				$snippetResult,
 				ddTools::encodedStringToArray($result_tpl_placeholders)
 			);
 		}
 		
-		$result = ddTools::parseText([
+		$snippetResult = ddTools::parseText([
 			'text' => $modx->getTpl($result_tpl),
-			'data' => $result
+			'data' => $snippetResult
 		]);
 	}
-	
-	return $result;
 }
+
+return $snippetResult;
 ?>
