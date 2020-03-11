@@ -30,10 +30,13 @@
  */
 
 //Include (MODX)EvolutionCMS.libraries.ddTools
-require_once($modx->getConfig('base_path') . 'assets/libs/ddTools/modx.ddtools.class.php');
+require_once(
+	$modx->getConfig('base_path') .
+	'assets/libs/ddTools/modx.ddtools.class.php'
+);
 
 //Для обратной совместимости
-extract(ddTools::verifyRenamedParams(
+extract(\ddTools::verifyRenamedParams(
 	$params,
 	[
 		'result_outputFormat' => 'outputFormat'
@@ -348,11 +351,11 @@ if(isset($inputColor)){
 		){
 			$snippetResult = array_merge(
 				$snippetResult,
-				ddTools::encodedStringToArray($result_tpl_placeholders)
+				\ddTools::encodedStringToArray($result_tpl_placeholders)
 			);
 		}
 		
-		$snippetResult = ddTools::parseText([
+		$snippetResult = \ddTools::parseText([
 			'text' => $modx->getTpl($result_tpl),
 			'data' => $snippetResult
 		]);
