@@ -116,12 +116,12 @@ if(isset($inputColor)){
 				0,
 				2
 			));
-			$gre = hexdec(substr(
+			$green = hexdec(substr(
 				$hex,
 				2,
 				2
 			));
-			$blu = hexdec(substr(
+			$blue = hexdec(substr(
 				$hex,
 				4,
 				2
@@ -130,28 +130,28 @@ if(isset($inputColor)){
 			//Находим максимальное и минимальное значения
 			$max = max(
 				$red,
-				$gre,
-				$blu
+				$green,
+				$blue
 			);
 			$min = min(
 				$red,
-				$gre,
-				$blu
+				$green,
+				$blue
 			);
 			
-			$hsl = [];
+			$resultHsl = [];
 			//Вычисляем яркость (от 0 до 100)
-			$hsl['L'] = round(($max + $min) / 2 * 100 / 255);
+			$resultHsl['L'] = round(($max + $min) / 2 * 100 / 255);
 			
 			//Если цвет серый
 			if($max == $min){
-				$hsl['S'] = 0;
-				$hsl['H'] = 0;
+				$resultHsl['S'] = 0;
+				$resultHsl['H'] = 0;
 			}else{
 				//Вычисляем насыщенность
-				$hsl['S'] = round(
+				$resultHsl['S'] = round(
 					(
-						$hsl['L'] > 50 ?
+						$resultHsl['L'] > 50 ?
 						(
 							($max - $min) /
 							(2 * 255 - $max - $min)
@@ -167,67 +167,67 @@ if(isset($inputColor)){
 				//Вычисляем тон
 				$hue = 0;
 				$tmpR = ($max - $red) / ($max - $min);
-				$tmpG = ($max - $gre) / ($max - $min);
-				$tmpL = ($max - $blu) / ($max - $min);
+				$tmpG = ($max - $green) / ($max - $min);
+				$tmpL = ($max - $blue) / ($max - $min);
 				
 				if($red == $max){
 					$hue = $tmpL - $tmpG;
-				}else if($gre == $max){
+				}else if($green == $max){
 					$hue = 2 + $tmpR - $tmpL;
-				}else if($blu == $max){
+				}else if($blue == $max){
 					$hue = 4 + $tmpG - $tmpR;
 				}
 				
-				$hsl['H'] = (round($hue * 60) + 360) % 360;
+				$resultHsl['H'] = (round($hue * 60) + 360) % 360;
 			}
 			
-			return $hsl;
+			return $resultHsl;
 		}
 	}
 	
 	if(!function_exists('ddHSLtoHEX')){
 		function ddHSLtoHEX($hsl){
-			$sat = $hsl['S'];
-			$bri = $hsl['L'];
+			$saturation = $hsl['S'];
+			$lightness = $hsl['L'];
 			
 			$rgb = [];
 			
 			//Если цвет серый
-			if($sat == 0){
-				$rgb['R'] = $bri;
-				$rgb['G'] = $bri;
-				$rgb['B'] = $bri;
+			if($saturation == 0){
+				$rgb['R'] = $lightness;
+				$rgb['G'] = $lightness;
+				$rgb['B'] = $lightness;
 			}else{
 				$hue = ($hsl['H'] + 360) % 360;
 				$hue2 = floor($hue / 60);
 				
 				$dif = ($hue % 60) / 60;
-				$mid1 = $bri * (100 - $sat * $dif) / 100;
-				$mid2 = $bri * (100 - $sat * (1 - $dif)) / 100;
-				$min = $bri * (100 - $sat) / 100;
+				$mid1 = $lightness * (100 - $saturation * $dif) / 100;
+				$mid2 = $lightness * (100 - $saturation * (1 - $dif)) / 100;
+				$min = $lightness * (100 - $saturation) / 100;
 				
 				if($hue2 == 0){
-					$rgb['R'] = $bri;
+					$rgb['R'] = $lightness;
 					$rgb['G'] = $mid2;
 					$rgb['B'] = $min;
 				}else if($hue2 == 1){
 					$rgb['R'] = $mid1;
-					$rgb['G'] = $bri;
+					$rgb['G'] = $lightness;
 					$rgb['B'] = $min;
 				}else if($hue2 == 2){
 					$rgb['R'] = $min;
-					$rgb['G'] = $bri;
+					$rgb['G'] = $lightness;
 					$rgb['B'] = $mid2;
 				}else if($hue2 == 3){
 					$rgb['R'] = $min;
 					$rgb['G'] = $mid1;
-					$rgb['B'] = $bri;
+					$rgb['B'] = $lightness;
 				}else if($hue2 == 4){
 					$rgb['R'] = $mid2;
 					$rgb['G'] = $min;
-					$rgb['B'] = $bri;
+					$rgb['B'] = $lightness;
 				}else{
-					$rgb['R'] = $bri;
+					$rgb['R'] = $lightness;
 					$rgb['G'] = $min;
 					$rgb['B'] = $mid1;
 				}
@@ -242,10 +242,10 @@ if(isset($inputColor)){
 	}
 	
 	//Преобразуем цвет в HSL
-	$hsl = ddHEXtoHSL($inputColor);
+	$inputColorHsl = ddHEXtoHSL($inputColor);
 	
 	foreach(
-		$hsl as
+		$inputColorHsl as
 		$key =>
 		$val
 	){
@@ -253,7 +253,7 @@ if(isset($inputColor)){
 			$hslRange[$key] as
 			$operation
 		){
-			$sim = preg_replace(
+			$operation_sign = preg_replace(
 				'/\d/',
 				'',
 				$operation
@@ -266,29 +266,29 @@ if(isset($inputColor)){
 			
 			//Если нужно прибавить
 			if(strpos(
-				$sim,
+				$operation_sign,
 				'+'
 			) !== false){
-				$hsl[$key] += $operation;
+				$inputColorHsl[$key] += $operation;
 				//Если нужно отнять
 			}else if(strpos(
-				$sim,
+				$operation_sign,
 				'-'
 			) !== false){
-				$hsl[$key] -= $operation;
+				$inputColorHsl[$key] -= $operation;
 			//Если нужно приравнять (если есть хоть какое-то число)
 			}else if(strlen($operation) > 0){
-				$hsl[$key] = $operation;
+				$inputColorHsl[$key] = $operation;
 			}
 			
 			//Если нужно задать максимальное, либо минимальное значение
 			if(strpos(
-				$sim,
+				$operation_sign,
 				'abs'
 			) !== false){
 				//Если меньше 50% — 0, в противном случае — максимальное значение
-				$hsl[$key] =
-					$hsl[$key] < ($hslMax[$key] / 2) ?
+				$inputColorHsl[$key] =
+					$inputColorHsl[$key] < ($hslMax[$key] / 2) ?
 					0 :
 					$hslMax[$key]
 				;
@@ -296,39 +296,39 @@ if(isset($inputColor)){
 			
 			//Если нужно инвертировать
 			if(strpos(
-				$sim,
+				$operation_sign,
 				'r'
 			) !== false){
-				$hsl[$key] = $hslMax[$key] + (-1 * $hsl[$key]);
+				$inputColorHsl[$key] = $hslMax[$key] + (-1 * $inputColorHsl[$key]);
 			}
 			
 			//Обрабатываем слишком маленькие значения
-			if($hsl[$key] < 0){
-				$hsl[$key] = $hslMax[$key] + $hsl[$key];
+			if($inputColorHsl[$key] < 0){
+				$inputColorHsl[$key] = $hslMax[$key] + $inputColorHsl[$key];
 			}
 		}
 	}
 	
 	//Обрабатываем слишком большие значения
-	if($hsl['H'] > $hslMax['H']){
-		$hsl['H'] = $hsl['H'] - $hslMax['H'];
+	if($inputColorHsl['H'] > $hslMax['H']){
+		$inputColorHsl['H'] = $inputColorHsl['H'] - $hslMax['H'];
 	}
-	if($hsl['S'] > $hslMax['S']){
-		$hsl['S'] = $hslMax['S'];
+	if($inputColorHsl['S'] > $hslMax['S']){
+		$inputColorHsl['S'] = $hslMax['S'];
 	}
-	if($hsl['L'] > $hslMax['L']){
-		$hsl['L'] = $hslMax['L'];
+	if($inputColorHsl['L'] > $hslMax['L']){
+		$inputColorHsl['L'] = $hslMax['L'];
 	}
 	
 	switch($result_outputFormat){
 		case 'hsl':
 			$snippetResult =
 				'hsl(' .
-				$hsl['H'] .
+				$inputColorHsl['H'] .
 				',' .
-				$hsl['S'] .
+				$inputColorHsl['S'] .
 				'%,' .
-				$hsl['L'] .
+				$inputColorHsl['L'] .
 				'%)'
 			;
 		break;
@@ -336,7 +336,7 @@ if(isset($inputColor)){
 		case 'hex':
 			$snippetResult = implode(
 				'',
-				ddHSLtoHEX($hsl)
+				ddHSLtoHEX($inputColorHsl)
 			);
 		break;
 	}
@@ -344,9 +344,9 @@ if(isset($inputColor)){
 	if (!empty($result_tpl)){
 		$snippetResult = [
 			'ddResult' => $snippetResult,
-			'ddH' => $hsl['H'],
-			'ddS' => $hsl['S'],
-			'ddL' => $hsl['L']
+			'ddH' => $inputColorHsl['H'],
+			'ddS' => $inputColorHsl['S'],
+			'ddL' => $inputColorHsl['L']
 		];
 		
 		//Если есть дополнительные данные
