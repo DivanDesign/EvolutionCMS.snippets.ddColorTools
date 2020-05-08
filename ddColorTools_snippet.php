@@ -3,32 +3,11 @@
  * ddColorTools
  * @version 2.0 (2017-05-22)
  * 
- * @desc Преобразует цвет в соответствии со смещением по тону, яркости или насыщенности.
+ * @see README.md
  * 
- * @uses PHP >= 5.6.
- * @uses [(MODX)EvolutionCMS.libraries.ddTools](https://code.divandesign.biz/modx/ddtools) >= 0.32
- * @uses [(MODX)EvolutionCMS.snippets.ddGetDocumentField](https://code.divandesign.biz/modx/ddgetdocumentfield) >= 2.10.1
+ * @link https://code.divandesign.biz/modx/ddcolortools
  * 
- * @param $inputColor {string} — Input color as HEX or HSL, case-insensitive. @required
- * @example `ffffff`
- * @example `#FFFFFF`
- * @example `hsl(0, 0%, 100%)`
- * @example `HSL(0, 0, 100)`
- * @param $inputColor_docField {string} — Имя поля (в котором содержится цвет) которое необходимо получить. Default: —.
- * @param $inputColor_docId {integer} — ID документа, поле которого нужно получить. Default: —.
- * @param $offset_h {string_commaSeparated} — Операции смещения цветового тона через запятую. Default: `'+0'`.
- * @param $offset_h[i] {string} — Смещение цветового тона в градусах [-360;+360]. `+` — прибавить, `-` — отнять, без знака — задать, `abs` — округлить до макс. или мин. значения, `r` — инвертировать. @required
- * @param $offset_s {string_commaSeparated} — Операции смещения насыщенности через запятую. Default: `'+0'`.
- * @param $offset_s[i] {string_commaSeparated} — Смещение насыщенности в процентах [-100;+100]. `+` — прибавить, `-` — отнять, без знака — задать, `abs` — округлить до макс. или мин. значения, `r` — инвертировать. @required
- * @param $offset_l {string_commaSeparated} — Операции смещения яркости через запятую. Default: `'+0'`.
- * @param $offset_l[i] {string_commaSeparated} — Смещение яркости в процентах [-100;+100]. `+` — прибавить, `-` — отнять, без знака — задать, `abs` — округлить до макс. или мин. значения, `r` — инвертировать. @required
- * @param $result_outputFormat {'hex'|'hsl'} — Какой формат цвета возвращать. Default: `'hex'`.
- * @param $result_tpl {string_chunkName|string} — Chunk to parse result (chunk name or code via `@CODE:` prefix). Availiable placeholders: `[+ddResult+]`, `[+ddH+]`, `[+ddS+]`, `[+ddL+]`. Default: ``.
- * @param $result_tpl_placeholders {stirng_json|string_queryFormated} — Additional data as [JSON](https://en.wikipedia.org/wiki/JSON) or [Query string](https://en.wikipedia.org/wiki/Query_string) has to be passed into `result_tpl`. Default: ``.
- * @example `{"pladeholder1": "value1", "pagetitle": "My awesome pagetitle!"}`
- * @example `pladeholder1=value1&pagetitle=My awesome pagetitle!`
- * 
- * @copyright 2011–2017 DD Group {@link http://www.DivanDesign.biz }
+ * @copyright 2011–2017 DD Group {@link https://DivanDesign.biz }
  */
 
 //Include (MODX)EvolutionCMS.libraries.ddTools
