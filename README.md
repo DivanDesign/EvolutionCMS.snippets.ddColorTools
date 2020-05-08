@@ -99,7 +99,7 @@ All parameters can contain the following special operators:
 	* Valid values:
 		* `'hex'`
 		* `'hsl'`
-	* Default value: `'hex'`
+	* Default value: `'hsl'`
 	
 * `result_tpl`
 	* Desctription: Chunk to parse result.  

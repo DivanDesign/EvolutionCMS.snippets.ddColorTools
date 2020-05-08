@@ -73,7 +73,7 @@ if(isset($inputColor)){
 	$result_outputFormat =
 		isset($result_outputFormat) ?
 		$result_outputFormat :
-		'hex'
+		'hsl'
 	;
 	
 	$hslMax = [
