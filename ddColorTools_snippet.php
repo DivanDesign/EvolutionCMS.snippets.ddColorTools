@@ -26,7 +26,7 @@
  * @example `{"pladeholder1": "value1", "pagetitle": "My awesome pagetitle!"}`
  * @example `pladeholder1=value1&pagetitle=My awesome pagetitle!`
  * 
- * @copyright 2011–2017 DivanDesign {@link http://www.DivanDesign.biz }
+ * @copyright 2011–2017 DD Group {@link http://www.DivanDesign.biz }
  */
 
 //Include (MODX)EvolutionCMS.libraries.ddTools
@@ -35,7 +35,7 @@ require_once(
 	'assets/libs/ddTools/modx.ddtools.class.php'
 );
 
-//Для обратной совместимости
+//Backward compatibility
 extract(\ddTools::verifyRenamedParams([
 	'params' => $params,
 	'compliance' => [
@@ -166,9 +166,18 @@ if(isset($inputColor)){
 				
 				//Вычисляем тон
 				$hue = 0;
-				$tmpR = ($max - $red) / ($max - $min);
-				$tmpG = ($max - $green) / ($max - $min);
-				$tmpL = ($max - $blue) / ($max - $min);
+				$tmpR =
+					($max - $red) /
+					($max - $min)
+				;
+				$tmpG =
+					($max - $green) /
+					($max - $min)
+				;
+				$tmpL =
+					($max - $blue) /
+					($max - $min)
+				;
 				
 				if($red == $max){
 					$hue = $tmpL - $tmpG;
@@ -178,7 +187,13 @@ if(isset($inputColor)){
 					$hue = 4 + $tmpG - $tmpR;
 				}
 				
-				$resultHsl['H'] = (round($hue * 60) + 360) % 360;
+				$resultHsl['H'] =
+					(
+						round($hue * 60) +
+						360
+					) %
+					360
+				;
 			}
 			
 			return $resultHsl;
@@ -201,10 +216,31 @@ if(isset($inputColor)){
 				$hue = ($hsl['H'] + 360) % 360;
 				$hue2 = floor($hue / 60);
 				
-				$dif = ($hue % 60) / 60;
-				$mid1 = $lightness * (100 - $saturation * $dif) / 100;
-				$mid2 = $lightness * (100 - $saturation * (1 - $dif)) / 100;
-				$min = $lightness * (100 - $saturation) / 100;
+				$dif =
+					($hue % 60) /
+					60
+				;
+				$mid1 =
+					$lightness *
+					(
+						100 -
+						$saturation * $dif
+					) /
+					100
+				;
+				$mid2 =
+					$lightness *
+					(
+						100 -
+						$saturation * (1 - $dif)
+					) /
+					100
+				;
+				$min =
+					$lightness *
+					(100 - $saturation) /
+					100
+				;
 				
 				if($hue2 == 0){
 					$rgb['R'] = $lightness;
@@ -232,12 +268,19 @@ if(isset($inputColor)){
 					$rgb['B'] = $mid1;
 				}
 			}
+			
 			//Обходим массив и преобразовываем все значения в hex (предварительно переводим из системы счисления от 0 до 100 в от 0 до 255)
-			return array_map(create_function('$a', '
-				$res = dechex(round($a*255/100));
-				//Если не хватает ноля, дописываем
-				return (strlen($res) < 2) ? "0".$res : $res;
-			'), $rgb);
+			return array_map(
+				create_function(
+					'$a',
+					'
+						$res = dechex(round($a*255/100));
+						//Если не хватает ноля, дописываем
+						return (strlen($res) < 2) ? "0".$res : $res;
+					'
+				),
+				$rgb
+			);
 		}
 	}
 	
@@ -299,12 +342,18 @@ if(isset($inputColor)){
 				$operation_sign,
 				'r'
 			) !== false){
-				$inputColorHsl[$key] = $hslMax[$key] + (-1 * $inputColorHsl[$key]);
+				$inputColorHsl[$key] =
+					$hslMax[$key] +
+					(-1 * $inputColorHsl[$key])
+				;
 			}
 			
 			//Обрабатываем слишком маленькие значения
 			if($inputColorHsl[$key] < 0){
-				$inputColorHsl[$key] = $hslMax[$key] + $inputColorHsl[$key];
+				$inputColorHsl[$key] =
+					$hslMax[$key] +
+					$inputColorHsl[$key]
+				;
 			}
 		}
 	}
