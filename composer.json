@@ -2,7 +2,7 @@
 	"name": "dd/evolutioncms-snippets-ddcolortools",
 	"type": "modxevo-snippet",
 	"version": "2.0.0",
-	"description": "Преобразует цвет в соответствии со смещением по тону, яркости или насыщенности.",
+	"description": "Converts the color to match the offset in tone, brightness, or saturation.",
 	"keywords": [
 		"modx",
 		"modx evo",
@@ -18,10 +18,12 @@
 		"color tools",
 		"color convert",
 		"hsl convert",
-		"rgb to hsl"
+		"rgb convert",
+		"rgb to hsl",
+		"hsl to rgb"
 	],
 	"require": {
-		"php": ">=5.4.0",
+		"php": ">=5.6.0",
 		"dd/evolutioncms-libraries-ddtools": ">=0.32.0",
 		"dd/evolutioncms-snippets-ddgetdocumentfield": ">=2.10.1"
 	}
