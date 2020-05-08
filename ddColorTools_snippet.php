@@ -72,7 +72,7 @@ if(isset($inputColor)){
 	
 	$result_outputFormat =
 		isset($result_outputFormat) ?
-		$result_outputFormat :
+		strtolower($result_outputFormat) :
 		'hsl'
 	;
 	

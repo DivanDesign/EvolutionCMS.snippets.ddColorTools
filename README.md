@@ -30,7 +30,8 @@ Elements → Snippets: Create a new snippet with the following data:
 #### Input color
 
 * `inputColor`
-	* Desctription: Input color as HEX or HSL, case-insensitive.  
+	* Desctription: Input color as HEX or HSL.  
+		Case-insensitive.    
 		Valid format examples:
 		* `ffffff`
 		* `#FFFFFF`
@@ -95,7 +96,8 @@ All parameters can contain the following special operators:
 #### Output
 
 * `result_outputFormat`
-	* Desctription: Output color format.
+	* Desctription: Output color format.  
+		Case-insensitive.
 	* Valid values:
 		* `'hex'`
 		* `'hsl'`
