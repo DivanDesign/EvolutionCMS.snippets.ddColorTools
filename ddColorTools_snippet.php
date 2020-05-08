@@ -6,7 +6,7 @@
  * @desc Преобразует цвет в соответствии со смещением по тону, яркости или насыщенности.
  * 
  * @uses PHP >= 5.6.
- * @uses [(MODX)EvolutionCMS.libraries.ddTools](https://code.divandesign.biz/modx/ddtools) >= 0.28
+ * @uses [(MODX)EvolutionCMS.libraries.ddTools](https://code.divandesign.biz/modx/ddtools) >= 0.32
  * @uses [(MODX)EvolutionCMS.snippets.ddGetDocumentField](https://code.divandesign.biz/modx/ddgetdocumentfield) >= 2.10.1
  * 
  * @param $inputColor {string} — Цвет в HEX. @required
@@ -36,12 +36,12 @@ require_once(
 );
 
 //Для обратной совместимости
-extract(\ddTools::verifyRenamedParams(
-	$params,
-	[
+extract(\ddTools::verifyRenamedParams([
+	'params' => $params,
+	'compliance' => [
 		'result_outputFormat' => 'outputFormat'
 	]
-));
+]));
 
 //The snippet must return an empty string even if result is absent
 $snippetResult = '';

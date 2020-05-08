@@ -22,7 +22,7 @@
 	],
 	"require": {
 		"php": ">=5.4.0",
-		"dd/evolutioncms-libraries-ddtools": ">=0.30.0",
+		"dd/evolutioncms-libraries-ddtools": ">=0.32.0",
 		"dd/evolutioncms-snippets-ddgetdocumentfield": ">=2.10.1"
 	}
 }
