@@ -7,7 +7,7 @@
  * 
  * @uses PHP >= 5.6.
  * @uses [(MODX)EvolutionCMS.libraries.ddTools](https://code.divandesign.biz/modx/ddtools) >= 0.28
- * @uses [(MODX)EvolutionCMS.snippets.ddGetDocumentField](https://code.divandesign.biz/modx/ddgetdocumentfield) >= 2.8
+ * @uses [(MODX)EvolutionCMS.snippets.ddGetDocumentField](https://code.divandesign.biz/modx/ddgetdocumentfield) >= 2.10.1
  * 
  * @param $inputColor {string} — Цвет в HEX. @required
  * @example `ffffff`
@@ -45,14 +45,19 @@ extract(\ddTools::verifyRenamedParams(
 
 //The snippet must return an empty string even if result is absent
 $snippetResult = '';
-
 //Если задано имя поля, которое необходимо получить
 if(isset($inputColor_docField)){
 	$inputColor = $modx->runSnippet(
 		'ddGetDocumentField',
 		[
-			'docId' => $inputColor_docId,
-			'docField' => $inputColor_docField
+			'dataProviderParams' => '{
+				"resourceId": "' .
+					$inputColor_docId .
+				'",
+				"resourceFields": "' .
+					$inputColor_docField .
+				'",
+			}'
 		]
 	);
 }
