@@ -9,9 +9,11 @@
  * @uses [(MODX)EvolutionCMS.libraries.ddTools](https://code.divandesign.biz/modx/ddtools) >= 0.32
  * @uses [(MODX)EvolutionCMS.snippets.ddGetDocumentField](https://code.divandesign.biz/modx/ddgetdocumentfield) >= 2.10.1
  * 
- * @param $inputColor {string} — Цвет в HEX. @required
+ * @param $inputColor {string} — Input color as HEX or HSL, case-insensitive. @required
  * @example `ffffff`
- * @example `#ffffff`
+ * @example `#FFFFFF`
+ * @example `hsl(0, 0%, 100%)`
+ * @example `HSL(0, 0, 100)`
  * @param $inputColor_docField {string} — Имя поля (в котором содержится цвет) которое необходимо получить. Default: —.
  * @param $inputColor_docId {integer} — ID документа, поле которого нужно получить. Default: —.
  * @param $offset_h {string_commaSeparated} — Операции смещения цветового тона через запятую. Default: `'+0'`.
@@ -100,13 +102,6 @@ if(isset($inputColor)){
 		'S' => 100,
 		'L' => 100
 	];
-	
-	//Удалим из цвета символ '#'
-	$inputColor = str_replace(
-		'#',
-		'',
-		$inputColor
-	);
 	
 	if(!function_exists('ddHEXtoHSL')){
 		function ddHEXtoHSL($hex){
@@ -284,8 +279,53 @@ if(isset($inputColor)){
 		}
 	}
 	
-	//Преобразуем цвет в HSL
-	$inputColorHsl = ddHEXtoHSL($inputColor);
+	//Case-insensitive
+	$inputColor = strtolower($inputColor);
+	
+	//If input color set as HSL
+	if (
+		strpos(
+			$inputColor,
+			'hsl'
+		) !== false
+	){
+		//Remove unwanted chars
+		$inputColor = str_replace(
+			[
+				'hsl',
+				'(',
+				')',
+				//Space
+				' ',
+				//Tab
+				'	'
+			],
+			'',
+			$inputColor
+		);
+		
+		$inputColor = explode(
+			',',
+			$inputColor
+		);
+		
+		$inputColorHsl = [
+			'H' => $inputColor[0],
+			'S' => $inputColor[1],
+			'L' => $inputColor[2]
+		];
+	//AS RGB
+	}else{
+		//Удалим из цвета символ '#'
+		$inputColor = str_replace(
+			'#',
+			'',
+			$inputColor
+		);
+		
+		//Преобразуем цвет в HSL
+		$inputColorHsl = ddHEXtoHSL($inputColor);
+	}
 	
 	foreach(
 		$inputColorHsl as
