@@ -18,7 +18,7 @@ Converts the color to match the offset in tone, brightness, or saturation.
 Elements → Snippets: Create a new snippet with the following data:
 
 1. Snippet name: `ddColorTools`.
-2. Description: `<b>2.0</b> Converts the color to match the offset in tone, brightness, or saturation.`.
+2. Description: `<b>3.0</b> Converts the color to match the offset in tone, brightness, or saturation.`.
 3. Category: `Core`.
 4. Parse DocBlock: `no`.
 5. Snippet code (php): Insert content of the `ddColorTools_snippet.php` file from the archive.

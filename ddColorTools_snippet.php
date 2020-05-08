@@ -1,13 +1,13 @@
 <?php
 /**
  * ddColorTools
- * @version 2.0 (2017-05-22)
+ * @version 3.0 (2020-05-08)
  * 
  * @see README.md
  * 
  * @link https://code.divandesign.biz/modx/ddcolortools
  * 
- * @copyright 2011–2017 DD Group {@link https://DivanDesign.biz }
+ * @copyright 2011–2020 DD Group {@link https://DivanDesign.biz }
  */
 
 //Include (MODX)EvolutionCMS.libraries.ddTools
