@@ -1,0 +1,30 @@
+{
+	"name": "dd/evolutioncms-snippets-ddcolortools",
+	"type": "modxevo-snippet",
+	"version": "3.0.0",
+	"description": "Converts the color to match the offset in tone, brightness, or saturation.",
+	"keywords": [
+		"modx",
+		"modx evo",
+		"modx evolution",
+		"evo",
+		"evo cms",
+		"evolutioncms",
+		"evolution cms",
+		"dd group",
+		"dd studio",
+		"divandesign",
+		"ddcolortools",
+		"color tools",
+		"color convert",
+		"hsl convert",
+		"rgb convert",
+		"rgb to hsl",
+		"hsl to rgb"
+	],
+	"require": {
+		"php": ">=5.6.0",
+		"dd/evolutioncms-libraries-ddtools": ">=0.32.0",
+		"dd/evolutioncms-snippets-ddgetdocumentfield": ">=2.10.1"
+	}
+}
