@@ -1,0 +1,28 @@
+{
+	"name": "dd/evolutioncms-snippets-ddcolortools",
+	"type": "modxevo-snippet",
+	"version": "2.0.0",
+	"description": "Преобразует цвет в соответствии со смещением по тону, яркости или насыщенности.",
+	"keywords": [
+		"modx",
+		"modx evo",
+		"modx evolution",
+		"evo",
+		"evo cms",
+		"evolutioncms",
+		"evolution cms",
+		"dd group",
+		"dd studio",
+		"divandesign",
+		"ddcolortools",
+		"color tools",
+		"color convert",
+		"hsl convert",
+		"rgb to hsl"
+	],
+	"require": {
+		"php": ">=5.4.0",
+		"dd/evolutioncms-libraries-ddtools": ">=0.30.0",
+		"dd/evolutioncms-snippets-ddgetdocumentfield": ">=2.8.0"
+	}
+}
