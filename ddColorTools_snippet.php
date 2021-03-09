@@ -147,9 +147,9 @@ if(isset($inputColor)){
 				
 				if($red == $max){
 					$hue = $tmpL - $tmpG;
-				}else if($green == $max){
+				}elseif($green == $max){
 					$hue = 2 + $tmpR - $tmpL;
-				}else if($blue == $max){
+				}elseif($blue == $max){
 					$hue = 4 + $tmpG - $tmpR;
 				}
 				
@@ -212,19 +212,19 @@ if(isset($inputColor)){
 					$rgb['R'] = $lightness;
 					$rgb['G'] = $mid2;
 					$rgb['B'] = $min;
-				}else if($hue2 == 1){
+				}elseif($hue2 == 1){
 					$rgb['R'] = $mid1;
 					$rgb['G'] = $lightness;
 					$rgb['B'] = $min;
-				}else if($hue2 == 2){
+				}elseif($hue2 == 2){
 					$rgb['R'] = $min;
 					$rgb['G'] = $lightness;
 					$rgb['B'] = $mid2;
-				}else if($hue2 == 3){
+				}elseif($hue2 == 3){
 					$rgb['R'] = $min;
 					$rgb['G'] = $mid1;
 					$rgb['B'] = $lightness;
-				}else if($hue2 == 4){
+				}elseif($hue2 == 4){
 					$rgb['R'] = $mid2;
 					$rgb['G'] = $min;
 					$rgb['B'] = $lightness;
@@ -325,13 +325,13 @@ if(isset($inputColor)){
 			) !== false){
 				$inputColorHsl[$key] += $operation;
 				//Если нужно отнять
-			}else if(strpos(
+			}elseif(strpos(
 				$operation_sign,
 				'-'
 			) !== false){
 				$inputColorHsl[$key] -= $operation;
 			//Если нужно приравнять (если есть хоть какое-то число)
-			}else if(strlen($operation) > 0){
+			}elseif(strlen($operation) > 0){
 				$inputColorHsl[$key] = $operation;
 			}
 			
