@@ -79,7 +79,7 @@ class Snippet extends \DDTools\Snippet {
 	
 	/**
 	 * run
-	 * @version 1.0.2 (2023-03-10)
+	 * @version 1.0.3 (2023-03-10)
 	 * 
 	 * @return {string}
 	 */
@@ -90,15 +90,15 @@ class Snippet extends \DDTools\Snippet {
 		//Required parameter
 		if(!empty($this->params->inputColor)){
 			$hslRange = (object) [
-				'H' => $this->params->offset_h,
-				'S' => $this->params->offset_s,
-				'L' => $this->params->offset_l
+				'h' => $this->params->offset_h,
+				's' => $this->params->offset_s,
+				'l' => $this->params->offset_l
 			];
 			
 			$hslMax = (object) [
-				'H' => 360,
-				'S' => 100,
-				'L' => 100
+				'h' => 360,
+				's' => 100,
+				'l' => 100
 			];
 			
 			//If input color set as HSL
@@ -129,9 +129,9 @@ class Snippet extends \DDTools\Snippet {
 				);
 				
 				$inputColorHsl = [
-					'H' => $this->params->inputColor[0],
-					'S' => $this->params->inputColor[1],
-					'L' => $this->params->inputColor[2]
+					'h' => $this->params->inputColor[0],
+					's' => $this->params->inputColor[1],
+					'l' => $this->params->inputColor[2]
 				];
 			//AS RGB
 			}else{
@@ -233,25 +233,25 @@ class Snippet extends \DDTools\Snippet {
 			}
 			
 			//Обрабатываем слишком большие значения
-			if($inputColorHsl['H'] > $hslMax->H){
-				$inputColorHsl['H'] = $inputColorHsl['H'] - $hslMax->H;
+			if($inputColorHsl['h'] > $hslMax->h){
+				$inputColorHsl['h'] = $inputColorHsl['h'] - $hslMax->h;
 			}
-			if($inputColorHsl['S'] > $hslMax->S){
-				$inputColorHsl['S'] = $hslMax->S;
+			if($inputColorHsl['s'] > $hslMax->s){
+				$inputColorHsl['s'] = $hslMax->s;
 			}
-			if($inputColorHsl['L'] > $hslMax->L){
-				$inputColorHsl['L'] = $hslMax->L;
+			if($inputColorHsl['l'] > $hslMax->l){
+				$inputColorHsl['l'] = $hslMax->l;
 			}
 			
 			switch($this->params->result_outputFormat){
 				case 'hsl':
 					$result =
 						'hsl(' .
-						$inputColorHsl['H'] .
+						$inputColorHsl['h'] .
 						',' .
-						$inputColorHsl['S'] .
+						$inputColorHsl['s'] .
 						'%,' .
-						$inputColorHsl['L'] .
+						$inputColorHsl['l'] .
 						'%)'
 					;
 				break;
@@ -267,9 +267,9 @@ class Snippet extends \DDTools\Snippet {
 			if (!empty($this->params->result_tpl)){
 				$result = [
 					'ddResult' => $result,
-					'ddH' => $inputColorHsl['H'],
-					'ddS' => $inputColorHsl['S'],
-					'ddL' => $inputColorHsl['L']
+					'ddH' => $inputColorHsl['h'],
+					'ddS' => $inputColorHsl['s'],
+					'ddL' => $inputColorHsl['l']
 				];
 				
 				//Если есть дополнительные данные
@@ -294,14 +294,14 @@ class Snippet extends \DDTools\Snippet {
 	
 	/**
 	 * hexToHsl
-	 * @version 1.0.1 (2023-03-10)
+	 * @version 2.0 (2023-03-10)
 	 * 
 	 * @param $hex {string} — Color in HEX format without first '#'. @required
 	 * 
 	 * @return $result {arrayAssociative}
-	 * @return $result['H'] {integer}
-	 * @return $result['S'] {integer}
-	 * @return $result['L'] {integer}
+	 * @return $result['h'] {integer}
+	 * @return $result['s'] {integer}
+	 * @return $result['l'] {integer}
 	 */
 	private function hexToHsl($hex): array {
 		//Получаем цвета в 10чной системе
@@ -336,19 +336,19 @@ class Snippet extends \DDTools\Snippet {
 		$resultHsl = [];
 		
 		//Вычисляем яркость (от 0 до 100)
-		$resultHsl['L'] = round(
+		$resultHsl['l'] = round(
 			($max + $min) / 2 * 100 / 255
 		);
 		
 		//Если цвет серый
 		if($max == $min){
-			$resultHsl['S'] = 0;
-			$resultHsl['H'] = 0;
+			$resultHsl['s'] = 0;
+			$resultHsl['h'] = 0;
 		}else{
 			//Вычисляем насыщенность
-			$resultHsl['S'] = round(
+			$resultHsl['s'] = round(
 				(
-					$resultHsl['L'] > 50 ?
+					$resultHsl['l'] > 50 ?
 					(
 						($max - $min) /
 						(2 * 255 - $max - $min)
@@ -384,7 +384,7 @@ class Snippet extends \DDTools\Snippet {
 				$hue = 4 + $tmpG - $tmpR;
 			}
 			
-			$resultHsl['H'] =
+			$resultHsl['h'] =
 				(
 					round($hue * 60) +
 					360
@@ -398,31 +398,31 @@ class Snippet extends \DDTools\Snippet {
 	
 	/**
 	 * hslToHex
-	 * @version 1.0.1 (2023-03-10)
+	 * @version 2.0 (2023-03-10)
 	 * 
 	 * @param $hsl {arrayAssociative} — Color in HSL format. @required
-	 * @param $hsl['H'] {integer} — Hue. @required
-	 * @param $hsl['S'] {integer} — Saturation. @required
-	 * @param $hsl['L'] {integer} — Lightness. @required
+	 * @param $hsl['h'] {integer} — Hue. @required
+	 * @param $hsl['s'] {integer} — Saturation. @required
+	 * @param $hsl['l'] {integer} — Lightness. @required
 	 * 
 	 * @return $result {arrayAssociative}
-	 * @return $result['R'] {integer}
-	 * @return $result['G'] {integer}
-	 * @return $result['B'] {integer}
+	 * @return $result['r'] {integer}
+	 * @return $result['g'] {integer}
+	 * @return $result['b'] {integer}
 	 */
 	private function hslToHex($hsl): array {
-		$saturation = $hsl['S'];
-		$lightness = $hsl['L'];
+		$saturation = $hsl['s'];
+		$lightness = $hsl['l'];
 		
 		$rgb = [];
 		
 		//Если цвет серый
 		if($saturation == 0){
-			$rgb['R'] = $lightness;
-			$rgb['G'] = $lightness;
-			$rgb['B'] = $lightness;
+			$rgb['r'] = $lightness;
+			$rgb['g'] = $lightness;
+			$rgb['b'] = $lightness;
 		}else{
-			$hue = ($hsl['H'] + 360) % 360;
+			$hue = ($hsl['h'] + 360) % 360;
 			$hue2 = floor($hue / 60);
 			
 			$dif =
@@ -452,29 +452,29 @@ class Snippet extends \DDTools\Snippet {
 			;
 			
 			if($hue2 == 0){
-				$rgb['R'] = $lightness;
-				$rgb['G'] = $mid2;
-				$rgb['B'] = $min;
+				$rgb['r'] = $lightness;
+				$rgb['g'] = $mid2;
+				$rgb['b'] = $min;
 			}elseif($hue2 == 1){
-				$rgb['R'] = $mid1;
-				$rgb['G'] = $lightness;
-				$rgb['B'] = $min;
+				$rgb['r'] = $mid1;
+				$rgb['g'] = $lightness;
+				$rgb['b'] = $min;
 			}elseif($hue2 == 2){
-				$rgb['R'] = $min;
-				$rgb['G'] = $lightness;
-				$rgb['B'] = $mid2;
+				$rgb['r'] = $min;
+				$rgb['g'] = $lightness;
+				$rgb['b'] = $mid2;
 			}elseif($hue2 == 3){
-				$rgb['R'] = $min;
-				$rgb['G'] = $mid1;
-				$rgb['B'] = $lightness;
+				$rgb['r'] = $min;
+				$rgb['g'] = $mid1;
+				$rgb['b'] = $lightness;
 			}elseif($hue2 == 4){
-				$rgb['R'] = $mid2;
-				$rgb['G'] = $min;
-				$rgb['B'] = $lightness;
+				$rgb['r'] = $mid2;
+				$rgb['g'] = $min;
+				$rgb['b'] = $lightness;
 			}else{
-				$rgb['R'] = $lightness;
-				$rgb['G'] = $min;
-				$rgb['B'] = $mid1;
+				$rgb['r'] = $lightness;
+				$rgb['g'] = $min;
+				$rgb['b'] = $mid1;
 			}
 		}
 		
