@@ -10,59 +10,91 @@
  * @copyright 2011–2020 DD Group {@link https://DivanDesign.biz }
  */
 
+
+//# Include
 //Include (MODX)EvolutionCMS.libraries.ddTools
 require_once(
 	$modx->getConfig('base_path') .
 	'assets/libs/ddTools/modx.ddtools.class.php'
 );
 
-//The snippet must return an empty string even if result is absent
-$snippetResult = '';
+
+//# Prepare params
+$params = \DDTools\ObjectTools::extend([
+	'objects' => [
+		//Defaults
+		(object) [
+			'inputColor' => '',
+			'inputColor_docField' => null,
+			'inputColor_docId' => null,
+			'offset_h' => '+0',
+			'offset_s' => '+0',
+			'offset_l' => '+0',
+			'result_outputFormat' => 'hsl',
+			'result_tpl' => '',
+			'result_tpl_placeholders' => [],
+		],
+		$params
+	]
+]);
+
 //Если задано имя поля, которое необходимо получить
-if(isset($inputColor_docField)){
-	$inputColor = \DDTools\Snippet::runSnippet([
+if(!empty($params->inputColor_docField)){
+	$params->inputColor = \DDTools\Snippet::runSnippet([
 		'name' => 'ddGetDocumentField',
 		'params' => [
 			'dataProviderParams' => [
-				'resourceId' => $inputColor_docId,
-				'resourceFields' => $inputColor_docField
+				'resourceId' => $params->inputColor_docId,
+				'resourceFields' => $params->inputColor_docField
 			]
 		]
 	]);
 }
 
-if(isset($inputColor)){
+//Case-insensitive
+foreach (
+	[
+		'inputColor',
+		'result_outputFormat',
+	] as
+	$paramName
+){
+	$params->{$paramName} = strtolower($params->{$paramName});
+}
+
+//Comma separated strings
+foreach (
+	[
+		'offset_h',
+		'offset_s',
+		'offset_l',
+	] as
+	$paramName
+){
+	$params->{$paramName} = explode(
+		',',
+		$params->{$paramName}
+	);
+}
+
+$params->result_tpl = $modx->getTpl($params->result_tpl);
+
+$params->result_tpl_placeholders = \DDTools\ObjectTools::convertType([
+	'object' => $params->result_tpl_placeholders,
+	'type' => 'objectArray'
+]);
+
+
+//# Run
+//The snippet must return an empty string even if result is absent
+$snippetResult = '';
+
+if(!empty($params->inputColor)){
 	$hslRange = [
-		'H' =>
-			isset($offset_h) ?
-			explode(
-				',',
-				$offset_h
-			) :
-			['+0']
-		,
-		'S' =>
-			isset($offset_s) ?
-			explode(
-				',',
-				$offset_s
-			) :
-			['+0']
-		,
-		'L' =>
-			isset($offset_l) ?
-			explode(
-				',',
-				$offset_l
-			) :
-			['+0']
+		'H' => $params->offset_h,
+		'S' => $params->offset_s,
+		'L' => $params->offset_l
 	];
-	
-	$result_outputFormat =
-		isset($result_outputFormat) ?
-		strtolower($result_outputFormat) :
-		'hsl'
-	;
 	
 	$hslMax = [
 		'H' => 360,
@@ -246,18 +278,15 @@ if(isset($inputColor)){
 		}
 	}
 	
-	//Case-insensitive
-	$inputColor = strtolower($inputColor);
-	
 	//If input color set as HSL
 	if (
 		strpos(
-			$inputColor,
+			$params->inputColor,
 			'hsl'
 		) !== false
 	){
 		//Remove unwanted chars
-		$inputColor = str_replace(
+		$params->inputColor = str_replace(
 			[
 				'hsl',
 				'(',
@@ -268,30 +297,30 @@ if(isset($inputColor)){
 				'	'
 			],
 			'',
-			$inputColor
+			$params->inputColor
 		);
 		
-		$inputColor = explode(
+		$params->inputColor = explode(
 			',',
-			$inputColor
+			$params->inputColor
 		);
 		
 		$inputColorHsl = [
-			'H' => $inputColor[0],
-			'S' => $inputColor[1],
-			'L' => $inputColor[2]
+			'H' => $params->inputColor[0],
+			'S' => $params->inputColor[1],
+			'L' => $params->inputColor[2]
 		];
 	//AS RGB
 	}else{
 		//Удалим из цвета символ '#'
-		$inputColor = str_replace(
+		$params->inputColor = str_replace(
 			'#',
 			'',
-			$inputColor
+			$params->inputColor
 		);
 		
 		//Преобразуем цвет в HSL
-		$inputColorHsl = ddHEXtoHSL($inputColor);
+		$inputColorHsl = ddHEXtoHSL($params->inputColor);
 	}
 	
 	foreach(
@@ -376,7 +405,7 @@ if(isset($inputColor)){
 		$inputColorHsl['L'] = $hslMax['L'];
 	}
 	
-	switch($result_outputFormat){
+	switch($params->result_outputFormat){
 		case 'hsl':
 			$snippetResult =
 				'hsl(' .
@@ -397,7 +426,7 @@ if(isset($inputColor)){
 		break;
 	}
 	
-	if (!empty($result_tpl)){
+	if (!empty($params->result_tpl)){
 		$snippetResult = [
 			'ddResult' => $snippetResult,
 			'ddH' => $inputColorHsl['H'],
@@ -406,23 +435,17 @@ if(isset($inputColor)){
 		];
 		
 		//Если есть дополнительные данные
-		if (
-			isset($result_tpl_placeholders) &&
-			trim($result_tpl_placeholders) != ''
-		){
+		if (!empty($params->result_tpl_placeholders)){
 			$snippetResult = \DDTools\ObjectTools::extend([
 				'objects' => [
 					$snippetResult,
-					\DDTools\ObjectTools::convertType([
-						'object' => $result_tpl_placeholders,
-						'type' => 'objectStdClass'
-					])
+					$params->result_tpl_placeholders
 				]
 			]);
 		}
 		
 		$snippetResult = \ddTools::parseText([
-			'text' => $modx->getTpl($result_tpl),
+			'text' => $params->result_tpl,
 			'data' => $snippetResult
 		]);
 	}
