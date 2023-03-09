@@ -79,7 +79,7 @@ class Snippet extends \DDTools\Snippet {
 	
 	/**
 	 * run
-	 * @version 1.0 (2023-03-10)
+	 * @version 1.0.1 (2023-03-10)
 	 * 
 	 * @return {string}
 	 */
@@ -199,7 +199,10 @@ class Snippet extends \DDTools\Snippet {
 					){
 						//Если меньше 50% — 0, в противном случае — максимальное значение
 						$inputColorHsl[$key] =
-							$inputColorHsl[$key] < ($hslMax[$key] / 2) ?
+							(
+								$inputColorHsl[$key] <
+								($hslMax[$key] / 2)
+							) ?
 							0 :
 							$hslMax[$key]
 						;
@@ -291,7 +294,7 @@ class Snippet extends \DDTools\Snippet {
 	
 	/**
 	 * hexToHsl
-	 * @version 1.0 (2023-03-10)
+	 * @version 1.0.1 (2023-03-10)
 	 * 
 	 * @param $hex {string} — Color in HEX format without first '#'. @required
 	 * 
@@ -333,7 +336,9 @@ class Snippet extends \DDTools\Snippet {
 		$resultHsl = [];
 		
 		//Вычисляем яркость (от 0 до 100)
-		$resultHsl['L'] = round(($max + $min) / 2 * 100 / 255);
+		$resultHsl['L'] = round(
+			($max + $min) / 2 * 100 / 255
+		);
 		
 		//Если цвет серый
 		if($max == $min){
@@ -393,7 +398,7 @@ class Snippet extends \DDTools\Snippet {
 	
 	/**
 	 * hslToHex
-	 * @version 1.0 (2023-03-10)
+	 * @version 1.0.1 (2023-03-10)
 	 * 
 	 * @param $hsl {arrayAssociative} — Color in HSL format. @required
 	 * @param $hsl['H'] {integer} — Hue. @required
@@ -478,9 +483,13 @@ class Snippet extends \DDTools\Snippet {
 			create_function(
 				'$a',
 				'
-					$res = dechex(round($a*255/100));
+					$res = dechex(round($a * 255 / 100));
 					//Если не хватает ноля, дописываем
-					return (strlen($res) < 2) ? "0".$res : $res;
+					return
+						strlen($res) < 2 ?
+						"0" . $res :
+						$res
+					;
 				'
 			),
 			$rgb
