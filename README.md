@@ -10,10 +10,7 @@ Converts the color to match the offset in tone, brightness, or saturation.
 * [(MODX)EvolutionCMS.snippets.ddGetDocumentField](https://code.divandesign.biz/modx/ddgetdocumentfield) >= 2.10.1
 
 
-## Documentation
-
-
-### Installation
+## Installation
 
 Elements → Snippets: Create a new snippet with the following data:
 
@@ -24,10 +21,10 @@ Elements → Snippets: Create a new snippet with the following data:
 5. Snippet code (php): Insert content of the `ddColorTools_snippet.php` file from the archive.
 
 
-### Parameters description
+## Parameters description
 
 
-#### Input color
+### Input color
 
 * `inputColor`
 	* Desctription: Input color as HEX or HSL.  
@@ -53,7 +50,7 @@ Elements → Snippets: Create a new snippet with the following data:
 	* Default value: —
 
 
-#### Color modification
+### Color modification
 
 All parameters can contain the following special operators:
 1. `+` (e. g. `+10`) — plus
@@ -93,7 +90,7 @@ All parameters can contain the following special operators:
 	* **Required**
 
 
-#### Output
+### Output
 
 * `result_outputFormat`
 	* Desctription: Output color format.  
