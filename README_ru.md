@@ -12,13 +12,20 @@
 
 ## Установка
 
-Элементы → Сниппеты: Создайте новый сниппет со следующими параметрами:
+
+### 1. Элементы → Сниппеты: Создайте новый сниппет со следующими параметрами
 
 1. Название сниппета: `ddColorTools`.
 2. Описание: `<b>3.0</b> Преобразует цвет в соответствии со смещением по тону, яркости или насыщенности.`.
 3. Категория: `Core`.
 4. Анализировать DocBlock: `no`.
 5. Код сниппета (php): Вставьте содержимое файла `ddColorTools_snippet.php` из архива.
+
+
+### 2. Элементы → Управление файлами
+
+1. Создайте новую папку `assets/snippets/ddColorTools/`.
+2. Извлеките содержимое архива в неё (кроме файла `ddColorTools_snippet.php`).
 
 
 ## Описание параметров
@@ -127,6 +134,29 @@
 			* `arrayAssociative`
 			* `object`
 	* Значение по умолчанию: —
+
+
+## Примеры
+
+
+### Запустить сниппет через `\DDTools\Snippet::runSnippet` без DB и eval
+
+```php
+//Подключение (MODX)EvolutionCMS.libraries.ddTools
+require_once(
+	$modx->getConfig('base_path') .
+	'assets/libs/ddTools/modx.ddtools.class.php'
+);
+
+//Запуск (MODX)EvolutionCMS.snippets.ddColorTools
+\DDTools\Snippet::runSnippet([
+	'name' => 'ddColorTools',
+	'params' => [
+		'inputColor' => '#000000',
+		'result_tpl' => 'colorTpl'
+	]
+]);
+```
 
 
 ## Ссылки

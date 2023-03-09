@@ -12,13 +12,20 @@ Converts the color to match the offset in tone, brightness, or saturation.
 
 ## Installation
 
-Elements → Snippets: Create a new snippet with the following data:
+
+### 1. Elements → Snippets: Create a new snippet with the following data
 
 1. Snippet name: `ddColorTools`.
 2. Description: `<b>3.0</b> Converts the color to match the offset in tone, brightness, or saturation.`.
 3. Category: `Core`.
 4. Parse DocBlock: `no`.
 5. Snippet code (php): Insert content of the `ddColorTools_snippet.php` file from the archive.
+
+
+### 2. Elements → Manage Files
+
+1. Create a new folder `assets/snippets/ddColorTools/`.
+2. Extract the archive to the folder (except `ddColorTools_snippet.php`).
 
 
 ## Parameters description
@@ -127,6 +134,29 @@ All parameters can contain the following special operators:
 			* `arrayAssociative`
 			* `object`
 	* Default value: —
+
+
+## Examples
+
+
+### Run the snippet through `\DDTools\Snippet::runSnippet` without DB and eval
+
+```php
+//Include (MODX)EvolutionCMS.libraries.ddTools
+require_once(
+	$modx->getConfig('base_path') .
+	'assets/libs/ddTools/modx.ddtools.class.php'
+);
+
+//Run (MODX)EvolutionCMS.snippets.ddColorTools
+\DDTools\Snippet::runSnippet([
+	'name' => 'ddColorTools',
+	'params' => [
+		'inputColor' => '#000000',
+		'result_tpl' => 'colorTpl'
+	]
+]);
+```
 
 
 ## Links
