@@ -79,7 +79,7 @@ class Snippet extends \DDTools\Snippet {
 	
 	/**
 	 * run
-	 * @version 1.0.1 (2023-03-10)
+	 * @version 1.0.2 (2023-03-10)
 	 * 
 	 * @return {string}
 	 */
@@ -89,13 +89,13 @@ class Snippet extends \DDTools\Snippet {
 		
 		//Required parameter
 		if(!empty($this->params->inputColor)){
-			$hslRange = [
+			$hslRange = (object) [
 				'H' => $this->params->offset_h,
 				'S' => $this->params->offset_s,
 				'L' => $this->params->offset_l
 			];
 			
-			$hslMax = [
+			$hslMax = (object) [
 				'H' => 360,
 				'S' => 100,
 				'L' => 100
@@ -152,7 +152,7 @@ class Snippet extends \DDTools\Snippet {
 				$val
 			){
 				foreach (
-					$hslRange[$key] as
+					$hslRange->{$key} as
 					$operation
 				){
 					$operation_sign = preg_replace(
@@ -201,10 +201,10 @@ class Snippet extends \DDTools\Snippet {
 						$inputColorHsl[$key] =
 							(
 								$inputColorHsl[$key] <
-								($hslMax[$key] / 2)
+								($hslMax->{$key} / 2)
 							) ?
 							0 :
-							$hslMax[$key]
+							$hslMax->{$key}
 						;
 					}
 					
@@ -217,7 +217,7 @@ class Snippet extends \DDTools\Snippet {
 						false
 					){
 						$inputColorHsl[$key] =
-							$hslMax[$key] +
+							$hslMax->{$key} +
 							(-1 * $inputColorHsl[$key])
 						;
 					}
@@ -225,7 +225,7 @@ class Snippet extends \DDTools\Snippet {
 					//Обрабатываем слишком маленькие значения
 					if($inputColorHsl[$key] < 0){
 						$inputColorHsl[$key] =
-							$hslMax[$key] +
+							$hslMax->{$key} +
 							$inputColorHsl[$key]
 						;
 					}
@@ -233,14 +233,14 @@ class Snippet extends \DDTools\Snippet {
 			}
 			
 			//Обрабатываем слишком большие значения
-			if($inputColorHsl['H'] > $hslMax['H']){
-				$inputColorHsl['H'] = $inputColorHsl['H'] - $hslMax['H'];
+			if($inputColorHsl['H'] > $hslMax->H){
+				$inputColorHsl['H'] = $inputColorHsl['H'] - $hslMax->H;
 			}
-			if($inputColorHsl['S'] > $hslMax['S']){
-				$inputColorHsl['S'] = $hslMax['S'];
+			if($inputColorHsl['S'] > $hslMax->S){
+				$inputColorHsl['S'] = $hslMax->S;
 			}
-			if($inputColorHsl['L'] > $hslMax['L']){
-				$inputColorHsl['L'] = $hslMax['L'];
+			if($inputColorHsl['L'] > $hslMax->L){
+				$inputColorHsl['L'] = $hslMax->L;
 			}
 			
 			switch($this->params->result_outputFormat){
