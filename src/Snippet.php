@@ -398,12 +398,12 @@ class Snippet extends \DDTools\Snippet {
 	
 	/**
 	 * hslToHex
-	 * @version 2.0 (2023-03-10)
+	 * @version 2.1 (2023-03-10)
 	 * 
-	 * @param $hsl {arrayAssociative} — Color in HSL format. @required
-	 * @param $hsl['h'] {integer} — Hue. @required
-	 * @param $hsl['s'] {integer} — Saturation. @required
-	 * @param $hsl['l'] {integer} — Lightness. @required
+	 * @param $hsl {stdClass|arrayAssociative} — Color in HSL format. @required
+	 * @param $hsl->h {integer} — Hue. @required
+	 * @param $hsl->s {integer} — Saturation. @required
+	 * @param $hsl->l {integer} — Lightness. @required
 	 * 
 	 * @return $result {arrayAssociative}
 	 * @return $result['r'] {integer}
@@ -411,8 +411,10 @@ class Snippet extends \DDTools\Snippet {
 	 * @return $result['b'] {integer}
 	 */
 	private function hslToHex($hsl): array {
-		$saturation = $hsl['s'];
-		$lightness = $hsl['l'];
+		$hsl = (object) $hsl;
+		
+		$saturation = $hsl->s;
+		$lightness = $hsl->l;
 		
 		$rgb = [];
 		
@@ -422,7 +424,7 @@ class Snippet extends \DDTools\Snippet {
 			$rgb['g'] = $lightness;
 			$rgb['b'] = $lightness;
 		}else{
-			$hue = ($hsl['h'] + 360) % 360;
+			$hue = ($hsl->h + 360) % 360;
 			$hue2 = floor($hue / 60);
 			
 			$dif =
