@@ -125,7 +125,9 @@
 	* Значение по умолчанию: —
 
 
-## [Home page →](https://code.divandesign.biz/modx/ddcolortools)
+## Ссылки
+
+* [Home page](https://code.divandesign.ru/modx/ddcolortools)
 
 
 <link rel="stylesheet" type="text/css" href="https://DivanDesign.ru/assets/files/ddMarkdown.css" />

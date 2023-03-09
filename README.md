@@ -125,7 +125,9 @@ All parameters can contain the following special operators:
 	* Default value: —
 
 
-## [Home page →](https://code.divandesign.biz/modx/ddcolortools)
+## Links
+
+* [Home page](https://code.divandesign.biz/modx/ddcolortools)
 
 
 <link rel="stylesheet" type="text/css" href="https://DivanDesign.ru/assets/files/ddMarkdown.css" />
