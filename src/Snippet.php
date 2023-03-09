@@ -398,33 +398,33 @@ class Snippet extends \DDTools\Snippet {
 	
 	/**
 	 * hslToHex
-	 * @version 3.0 (2023-03-10)
+	 * @version 3.0.1 (2023-03-10)
 	 * 
-	 * @param $hsl {stdClass|arrayAssociative} — Color in HSL format. @required
-	 * @param $hsl->h {integer} — Hue. @required
-	 * @param $hsl->s {integer} — Saturation. @required
-	 * @param $hsl->l {integer} — Lightness. @required
+	 * @param $paramHsl {stdClass|arrayAssociative} — Color in HSL format. @required
+	 * @param $paramHsl->h {integer} — Hue. @required
+	 * @param $paramHsl->s {integer} — Saturation. @required
+	 * @param $paramHsl->l {integer} — Lightness. @required
 	 * 
 	 * @return $result {stdClass}
 	 * @return $result->r {string}
 	 * @return $result->g {string}
 	 * @return $result->b {string}
 	 */
-	private function hslToHex($hsl): \stdClass {
-		$hsl = (object) $hsl;
+	private function hslToHex($paramHsl): \stdClass {
+		$paramHsl = (object) $paramHsl;
 		
-		$saturation = $hsl->s;
-		$lightness = $hsl->l;
+		$saturation = $paramHsl->s;
+		$lightness = $paramHsl->l;
 		
-		$rgb = new \stdClass();
+		$resultRgb = new \stdClass();
 		
 		//Если цвет серый
 		if($saturation == 0){
-			$rgb->r = $lightness;
-			$rgb->g = $lightness;
-			$rgb->b = $lightness;
+			$resultRgb->r = $lightness;
+			$resultRgb->g = $lightness;
+			$resultRgb->b = $lightness;
 		}else{
-			$hue = ($hsl->h + 360) % 360;
+			$hue = ($paramHsl->h + 360) % 360;
 			$hue2 = floor($hue / 60);
 			
 			$dif =
@@ -454,46 +454,46 @@ class Snippet extends \DDTools\Snippet {
 			;
 			
 			if($hue2 == 0){
-				$rgb->r = $lightness;
-				$rgb->g = $mid2;
-				$rgb->b = $min;
+				$resultRgb->r = $lightness;
+				$resultRgb->g = $mid2;
+				$resultRgb->b = $min;
 			}elseif($hue2 == 1){
-				$rgb->r = $mid1;
-				$rgb->g = $lightness;
-				$rgb->b = $min;
+				$resultRgb->r = $mid1;
+				$resultRgb->g = $lightness;
+				$resultRgb->b = $min;
 			}elseif($hue2 == 2){
-				$rgb->r = $min;
-				$rgb->g = $lightness;
-				$rgb->b = $mid2;
+				$resultRgb->r = $min;
+				$resultRgb->g = $lightness;
+				$resultRgb->b = $mid2;
 			}elseif($hue2 == 3){
-				$rgb->r = $min;
-				$rgb->g = $mid1;
-				$rgb->b = $lightness;
+				$resultRgb->r = $min;
+				$resultRgb->g = $mid1;
+				$resultRgb->b = $lightness;
 			}elseif($hue2 == 4){
-				$rgb->r = $mid2;
-				$rgb->g = $min;
-				$rgb->b = $lightness;
+				$resultRgb->r = $mid2;
+				$resultRgb->g = $min;
+				$resultRgb->b = $lightness;
 			}else{
-				$rgb->r = $lightness;
-				$rgb->g = $min;
-				$rgb->b = $mid1;
+				$resultRgb->r = $lightness;
+				$resultRgb->g = $min;
+				$resultRgb->b = $mid1;
 			}
 		}
 		
 		//Обходим массив и преобразовываем все значения в hex (предварительно переводим из системы счисления от 0 до 100 в от 0 до 255)
 		foreach (
-			$rgb as
+			$resultRgb as
 			$key =>
 			$val
 		){
-			$rgb->{$key} = dechex(round($val * 255 / 100));
+			$resultRgb->{$key} = dechex(round($val * 255 / 100));
 			
 			//Если не хватает ноля, дописываем
-			if (strlen($rgb->{$key}) < 2){
-				$rgb->{$key} = '0' . $rgb->{$key};
+			if (strlen($resultRgb->{$key}) < 2){
+				$resultRgb->{$key} = '0' . $resultRgb->{$key};
 			}
 		}
 		
-		return $rgb;
+		return $resultRgb;
 	}
 }
