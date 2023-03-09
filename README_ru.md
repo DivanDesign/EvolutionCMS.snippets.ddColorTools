@@ -128,6 +128,9 @@
 ## Ссылки
 
 * [Home page](https://code.divandesign.ru/modx/ddcolortools)
+* [Telegram chat](https://t.me/dd_code)
+* [Packagist](https://packagist.org/packages/dd/evolutioncms-snippets-ddcolortools)
+* [GitHub](https://github.com/DivanDesign/EvolutionCMS.snippets.ddColorTools)
 
 
 <link rel="stylesheet" type="text/css" href="https://DivanDesign.ru/assets/files/ddMarkdown.css" />
