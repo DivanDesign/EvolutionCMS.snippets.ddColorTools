@@ -20,19 +20,15 @@ require_once(
 $snippetResult = '';
 //Если задано имя поля, которое необходимо получить
 if(isset($inputColor_docField)){
-	$inputColor = $modx->runSnippet(
-		'ddGetDocumentField',
-		[
-			'dataProviderParams' => '{
-				"resourceId": "' .
-					$inputColor_docId .
-				'",
-				"resourceFields": "' .
-					$inputColor_docField .
-				'",
-			}'
+	$inputColor = \DDTools\Snippet::runSnippet([
+		'name' => 'ddGetDocumentField',
+		'params' => [
+			'dataProviderParams' => [
+				'resourceId' => $inputColor_docId,
+				'resourceFields' => $inputColor_docField
+			]
 		]
-	);
+	]);
 }
 
 if(isset($inputColor)){
