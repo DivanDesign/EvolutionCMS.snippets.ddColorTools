@@ -13,7 +13,10 @@
 ## Установка
 
 
-### 1. Элементы → Сниппеты: Создайте новый сниппет со следующими параметрами
+### Вручную
+
+
+#### 1. Элементы → Сниппеты: Создайте новый сниппет со следующими параметрами
 
 1. Название сниппета: `ddColorTools`.
 2. Описание: `<b>3.0</b> Преобразует цвет в соответствии со смещением по тону, яркости или насыщенности.`.
@@ -22,10 +25,32 @@
 5. Код сниппета (php): Вставьте содержимое файла `ddColorTools_snippet.php` из архива.
 
 
-### 2. Элементы → Управление файлами
+#### 2. Элементы → Управление файлами
 
 1. Создайте новую папку `assets/snippets/ddColorTools/`.
 2. Извлеките содержимое архива в неё (кроме файла `ddColorTools_snippet.php`).
+
+
+### Используя [(MODX)EvolutionCMS.libraries.ddInstaller](https://github.com/DivanDesign/EvolutionCMS.libraries.ddInstaller)
+
+Просто вызовите следующий код в своих исходинках или модуле [Console](https://github.com/vanchelo/MODX-Evolution-Ajax-Console):
+
+```php
+//Подключение (MODX)EvolutionCMS.libraries.ddInstaller
+require_once(
+	$modx->getConfig('base_path') .
+	'assets/libs/ddInstaller/require.php'
+);
+
+//Установка (MODX)EvolutionCMS.snippets.ddColorTools
+\DDInstaller::install([
+	'url' => 'https://github.com/DivanDesign/EvolutionCMS.snippets.ddColorTools',
+	'type' => 'snippet'
+]);
+```
+
+* Если `ddColorTools` отсутствует на вашем сайте, `ddInstaller` просто установит его.
+* Если `ddColorTools` уже есть на вашем сайте, `ddInstaller` проверит его версию и обновит, если нужно. 
 
 
 ## Описание параметров
