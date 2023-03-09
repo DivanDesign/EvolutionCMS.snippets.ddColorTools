@@ -79,7 +79,7 @@ class Snippet extends \DDTools\Snippet {
 	
 	/**
 	 * run
-	 * @version 1.0.4 (2023-03-10)
+	 * @version 1.0.5 (2023-03-10)
 	 * 
 	 * @return {string}
 	 */
@@ -257,10 +257,7 @@ class Snippet extends \DDTools\Snippet {
 				break;
 				
 				case 'hex':
-					$result = implode(
-						'',
-						(array) $this->hslToHex($inputColorHsl)
-					);
+					$result = $this->hslToHex($inputColorHsl);
 				break;
 			}
 			
@@ -398,19 +395,16 @@ class Snippet extends \DDTools\Snippet {
 	
 	/**
 	 * hslToHex
-	 * @version 3.0.1 (2023-03-10)
+	 * @version 4.0 (2023-03-10)
 	 * 
 	 * @param $paramHsl {stdClass|arrayAssociative} — Color in HSL format. @required
 	 * @param $paramHsl->h {integer} — Hue. @required
 	 * @param $paramHsl->s {integer} — Saturation. @required
 	 * @param $paramHsl->l {integer} — Lightness. @required
 	 * 
-	 * @return $result {stdClass}
-	 * @return $result->r {string}
-	 * @return $result->g {string}
-	 * @return $result->b {string}
+	 * @return $result {string}
 	 */
-	private function hslToHex($paramHsl): \stdClass {
+	private function hslToHex($paramHsl): string {
 		$paramHsl = (object) $paramHsl;
 		
 		$saturation = $paramHsl->s;
@@ -494,6 +488,9 @@ class Snippet extends \DDTools\Snippet {
 			}
 		}
 		
-		return $resultRgb;
+		return implode(
+			'',
+			(array) $resultRgb
+		);
 	}
 }
