@@ -410,10 +410,15 @@ if(isset($inputColor)){
 			isset($result_tpl_placeholders) &&
 			trim($result_tpl_placeholders) != ''
 		){
-			$snippetResult = array_merge(
-				$snippetResult,
-				\ddTools::encodedStringToArray($result_tpl_placeholders)
-			);
+			$snippetResult = \DDTools\ObjectTools::extend([
+				'objects' => [
+					$snippetResult,
+					\DDTools\ObjectTools::convertType([
+						'object' => $result_tpl_placeholders,
+						'type' => 'objectStdClass'
+					])
+				]
+			]);
 		}
 		
 		$snippetResult = \ddTools::parseText([
