@@ -79,7 +79,7 @@ class Snippet extends \DDTools\Snippet {
 	
 	/**
 	 * run
-	 * @version 1.0.5 (2023-03-10)
+	 * @version 1.0.6 (2023-03-10)
 	 * 
 	 * @return {string}
 	 */
@@ -128,7 +128,7 @@ class Snippet extends \DDTools\Snippet {
 					$this->params->inputColor
 				);
 				
-				$inputColorHsl = (object) [
+				$resultColorHsl = (object) [
 					'h' => $this->params->inputColor[0],
 					's' => $this->params->inputColor[1],
 					'l' => $this->params->inputColor[2]
@@ -143,11 +143,11 @@ class Snippet extends \DDTools\Snippet {
 				);
 				
 				//Преобразуем цвет в HSL
-				$inputColorHsl = $this->hexToHsl($this->params->inputColor);
+				$resultColorHsl = $this->hexToHsl($this->params->inputColor);
 			}
 			
 			foreach(
-				$inputColorHsl as
+				$resultColorHsl as
 				$key =>
 				$val
 			){
@@ -174,7 +174,7 @@ class Snippet extends \DDTools\Snippet {
 						) !==
 						false
 					){
-						$inputColorHsl->{$key} += $operation;
+						$resultColorHsl->{$key} += $operation;
 					//Если нужно отнять
 					}elseif(
 						strpos(
@@ -183,10 +183,10 @@ class Snippet extends \DDTools\Snippet {
 						) !==
 						false
 					){
-						$inputColorHsl->{$key} -= $operation;
+						$resultColorHsl->{$key} -= $operation;
 					//Если нужно приравнять (если есть хоть какое-то число)
 					}elseif(strlen($operation) > 0){
-						$inputColorHsl->{$key} = $operation;
+						$resultColorHsl->{$key} = $operation;
 					}
 					
 					//Если нужно задать максимальное, либо минимальное значение
@@ -198,9 +198,9 @@ class Snippet extends \DDTools\Snippet {
 						false
 					){
 						//Если меньше 50% — 0, в противном случае — максимальное значение
-						$inputColorHsl->{$key} =
+						$resultColorHsl->{$key} =
 							(
-								$inputColorHsl->{$key} <
+								$resultColorHsl->{$key} <
 								($hslMax->{$key} / 2)
 							) ?
 							0 :
@@ -216,57 +216,57 @@ class Snippet extends \DDTools\Snippet {
 						) !==
 						false
 					){
-						$inputColorHsl->{$key} =
+						$resultColorHsl->{$key} =
 							$hslMax->{$key} +
-							(-1 * $inputColorHsl->{$key})
+							(-1 * $resultColorHsl->{$key})
 						;
 					}
 					
 					//Обрабатываем слишком маленькие значения
-					if($inputColorHsl->{$key} < 0){
-						$inputColorHsl->{$key} =
+					if($resultColorHsl->{$key} < 0){
+						$resultColorHsl->{$key} =
 							$hslMax->{$key} +
-							$inputColorHsl->{$key}
+							$resultColorHsl->{$key}
 						;
 					}
 				}
 			}
 			
 			//Обрабатываем слишком большие значения
-			if($inputColorHsl->h > $hslMax->h){
-				$inputColorHsl->h = $inputColorHsl->h - $hslMax->h;
+			if($resultColorHsl->h > $hslMax->h){
+				$resultColorHsl->h = $resultColorHsl->h - $hslMax->h;
 			}
-			if($inputColorHsl->s > $hslMax->s){
-				$inputColorHsl->s = $hslMax->s;
+			if($resultColorHsl->s > $hslMax->s){
+				$resultColorHsl->s = $hslMax->s;
 			}
-			if($inputColorHsl->l > $hslMax->l){
-				$inputColorHsl->l = $hslMax->l;
+			if($resultColorHsl->l > $hslMax->l){
+				$resultColorHsl->l = $hslMax->l;
 			}
 			
 			switch($this->params->result_outputFormat){
 				case 'hsl':
 					$result =
 						'hsl(' .
-						$inputColorHsl->h .
+						$resultColorHsl->h .
 						',' .
-						$inputColorHsl->s .
+						$resultColorHsl->s .
 						'%,' .
-						$inputColorHsl->l .
+						$resultColorHsl->l .
 						'%)'
 					;
 				break;
 				
 				case 'hex':
-					$result = $this->hslToHex($inputColorHsl);
+					$result = $this->hslToHex($resultColorHsl);
 				break;
 			}
 			
 			if (!empty($this->params->result_tpl)){
 				$result = [
 					'ddResult' => $result,
-					'ddH' => $inputColorHsl->h,
-					'ddS' => $inputColorHsl->s,
-					'ddL' => $inputColorHsl->l
+					'ddH' => $resultColorHsl->h,
+					'ddS' => $resultColorHsl->s,
+					'ddL' => $resultColorHsl->l
 				];
 				
 				//Если есть дополнительные данные
