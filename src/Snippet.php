@@ -79,7 +79,7 @@ class Snippet extends \DDTools\Snippet {
 	
 	/**
 	 * run
-	 * @version 1.1 (2023-03-10)
+	 * @version 1.2 (2023-03-10)
 	 * 
 	 * @return {string}
 	 */
@@ -122,6 +122,7 @@ class Snippet extends \DDTools\Snippet {
 						'hsl',
 						'hsb',
 						'hsv',
+						'%',
 						'(',
 						')',
 						//Space
