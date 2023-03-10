@@ -1,7 +1,29 @@
 # (MODX)EvolutionCMS.snippets.ddColorTools changelog
 
 
-## Version 3.0 (2020-05-08)
+## Версия 3.1 (2023-03-10)
+* \* Внимание! Требуется (MODX)EvolutionCMS.libraries.ddTools >= 0.57.
+* \* Внимание! Требуется (MODX)EvolutionCMS.snippets.ddGetDocumentField >= 2.11.1.
+* \+ Параметры:
+	* \+ `inputColor`:
+		* \+ Также может быть задан, как HSB/HSV.
+		* \+ Поддерживается символ `%` в форматах HSL или HSB/HSV.
+	* \+ `result_outputFormat` → Допустимые значения → `rgb`: Новый формат вывода.
+	* \+ `result_tpl` → Плейсхолдеры → `[+ddIsDark+]`: Новый плейсхолдер. Равен `1` если цвет тёмный или `0` в противном случае (см. README → Примеры).
+	* \+ `result_tpl_placeholders`: Также может быть задан, как [HJSON](https://hjson.github.io/) или как нативный PHP объект/массив.
+* \+ Запустить сниппет без DB и eval можно через `\DDTools\Snippet::runSnippet` (см. примеры в README → Примеры).
+* \* `\DDTools\Snippet::runSnippet` используется вместо `$modx->runSnippet` для запуска (MODX)EvolutionCMS.snippets.ddGetDocumentField без DB и eval.
+* \* Исправлена ошибка HSL ≠ HSB, возникшая в 55685f6b2ab6be5806bcd6c4c1f9c382ac5a328d.
+* \* README:
+	* \+ Установка → Используя (MODX)EvolutionCMS.libraries.ddInstaller.
+	* \+ Ссылки.
+* \+ Composer.json:
+	* \+ `homepage`.
+	* \+ `support`.
+	* \+ `authors`.
+
+
+## Версия 3.0 (2020-05-08)
 * \* Внимание! Требуется (MODX)EvolutionCMS.snippets.ddGetDocumentField >= 2.10.1.
 * \* Внимание! Требуется (MODX)EvolutionCMS.libraries.ddTools >= 0.32.
 * \* Внимание! Обратная совместимость нарушена:
