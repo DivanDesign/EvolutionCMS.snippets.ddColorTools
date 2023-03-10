@@ -79,7 +79,7 @@ class Snippet extends \DDTools\Snippet {
 	
 	/**
 	 * run
-	 * @version 1.3 (2023-03-10)
+	 * @version 1.3.1 (2023-03-10)
 	 * 
 	 * @return {string}
 	 */
@@ -101,71 +101,7 @@ class Snippet extends \DDTools\Snippet {
 				'l' => 100
 			];
 			
-			//If input color set as HSL || HSB/HSV
-			if (
-				strpos(
-					$this->params->inputColor,
-					'hs'
-				) !== false
-			){
-				$isInputColorHsl =
-					strpos(
-						$this->params->inputColor,
-						'hsl'
-					) !==
-					false
-				;
-				
-				//Remove unwanted chars
-				$this->params->inputColor = str_replace(
-					[
-						'hsl',
-						'hsb',
-						'hsv',
-						'%',
-						'(',
-						')',
-						//Space
-						' ',
-						//Tab
-						'	'
-					],
-					'',
-					$this->params->inputColor
-				);
-				
-				$this->params->inputColor = explode(
-					',',
-					$this->params->inputColor
-				);
-				
-				//If input color set as HSL
-				if ($isInputColorHsl){
-					$resultColorHsl = (object) [
-						'h' => $this->params->inputColor[0],
-						's' => $this->params->inputColor[1],
-						'l' => $this->params->inputColor[2]
-					];
-				//As HSB/HSV	
-				}else{
-					$resultColorHsl = static::hsbToHsl([
-						'h' => $this->params->inputColor[0],
-						's' => $this->params->inputColor[1],
-						'b' => $this->params->inputColor[2]
-					]);
-				}
-			//AS RGB
-			}else{
-				//Удалим из цвета символ '#'
-				$this->params->inputColor = str_replace(
-					'#',
-					'',
-					$this->params->inputColor
-				);
-				
-				//Преобразуем цвет в HSL
-				$resultColorHsl = static::hexToHsl($this->params->inputColor);
-			}
+			$resultColorHsl = static::stringToHsl($this->params->inputColor);
 			
 			foreach(
 				$resultColorHsl as
@@ -329,10 +265,89 @@ class Snippet extends \DDTools\Snippet {
 	}
 	
 	/**
-	 * hexToHsl
-	 * @version 3.0.1 (2023-03-10)
+	 * stringToHsl
+	 * @version 1.0 (2023-03-10)
 	 * 
-	 * @param $hex {string} — Color in HEX format without first '#'. @required
+	 * @param $paramString {string} — Color string in the HEX, HSL or HSB/HSV formats. @required
+	 * 
+	 * @return $result {stdClass}
+	 * @return $result->h {integer}
+	 * @return $result->s {integer}
+	 * @return $result->l {integer}
+	 */
+	private static function stringToHsl($paramString): \stdClass {
+		//If input color set as HSL || HSB/HSV
+		if (
+			strpos(
+				$paramString,
+				'hs'
+			) !== false
+		){
+			$isInputColorHsl =
+				strpos(
+					$paramString,
+					'hsl'
+				) !==
+				false
+			;
+			
+			//Remove unwanted chars
+			$paramString = str_replace(
+				[
+					'hsl',
+					'hsb',
+					'hsv',
+					'%',
+					'(',
+					')',
+					//Space
+					' ',
+					//Tab
+					'	'
+				],
+				'',
+				$paramString
+			);
+			
+			$paramString = explode(
+				',',
+				$paramString
+			);
+			
+			//If input color set as HSL
+			if ($isInputColorHsl){
+				$resultHsl = (object) [
+					'h' => $paramString[0],
+					's' => $paramString[1],
+					'l' => $paramString[2]
+				];
+			//As HSB/HSV	
+			}else{
+				$resultHsl = static::hsbToHsl([
+					'h' => $paramString[0],
+					's' => $paramString[1],
+					'b' => $paramString[2]
+				]);
+			}
+		//AS RGB
+		}else{
+			//Удалим из цвета символ '#'
+			$paramString = str_replace(
+				'#',
+				'',
+				$paramString
+			);
+			
+			//Преобразуем цвет в HSL
+			$resultHsl = static::hexToHsl($paramString);
+		}
+		
+		return $resultHsl;
+	}
+	
+	/**
+	 * hexToHsl
+	 * @version 3.0.1 (2023-03-10$this->params->inputColor$hex {string} — Color in HEX format without first '#'. @required
 	 * 
 	 * @return $result {stdClass}
 	 * @return $result->h {integer}
