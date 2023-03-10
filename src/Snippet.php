@@ -79,7 +79,7 @@ class Snippet extends \DDTools\Snippet {
 	
 	/**
 	 * run
-	 * @version 1.3.1 (2023-03-10)
+	 * @version 1.4 (2023-03-10)
 	 * 
 	 * @return {string}
 	 */
@@ -241,7 +241,14 @@ class Snippet extends \DDTools\Snippet {
 					'ddResult' => $result,
 					'ddH' => $resultColorHsl->h,
 					'ddS' => $resultColorHsl->s,
-					'ddL' => $resultColorHsl->l
+					'ddL' => $resultColorHsl->l,
+					'ddIsDark' => intval(
+						static::isRgbDark(
+							static::hsbToRgb(
+								static::hslToHsb($resultColorHsl)
+							)
+						)
+					)
 				];
 				
 				//Если есть дополнительные данные
@@ -686,5 +693,32 @@ class Snippet extends \DDTools\Snippet {
 		}
 		
 		return $resultHsb;
+	}
+	
+	/**
+	 * isRgbDark
+	 * @version 1.0 (2023-03-10)
+	 * 
+	 * @param $paramRgb {stdClass|arrayAssociative} — Color in RGB format. @required
+	 * @param $paramRgb->r {integer} — Red. @required
+	 * @param $paramRgb->g {integer} — Green. @required
+	 * @param $paramRgb->b {integer} — Blue. @required
+	 * 
+	 * @return $result {boolean}
+	 */
+	private static function isRgbDark($paramRgb): bool {
+		$paramRgb = (object) $paramRgb;
+		
+		//Calc luma by W3C method (https://www.w3.org/TR/AERT/#color-contrast)
+		$luma = 
+			(
+				$paramRgb->r * 29.9 +
+				$paramRgb->g * 58.7 +
+				$paramRgb->b * 11.4
+			) /
+			255
+		;
+		
+		return $luma < 50;
 	}
 }

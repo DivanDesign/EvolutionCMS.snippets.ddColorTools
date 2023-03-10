@@ -144,6 +144,7 @@ All parameters can contain the following special operators:
 		* `[+ddH+]` — hue
 		* `[+ddS+]` — saturation
 		* `[+ddL+]` — lightness
+		* `[+ddIsDark+]` — is color dark (`0` || `1`)?
 	* Valid values:
 		* `stringChunkName`
 		* `string` — use inline templates starting with `@CODE:`
@@ -167,6 +168,31 @@ All parameters can contain the following special operators:
 
 
 ## Examples
+
+
+### Set black or white font color depending on background color
+
+We need black texts in light backgrounds and vice versa.
+
+Let's pass background color as `inputColor` to the snippet:
+
+```
+color: [[ddColorTools?
+	&inputColor=`#007cc3`
+	&result_tpl=`blackOrWhiteColor`
+]];
+```
+
+Code of the `blackOrWhiteColor` chunk:
+
+```
+hsl(0, 0%, [[ddIf?
+	&operand1=`[+ddIsDark+]`
+	&operator=`bool`
+	&trueChunk=`100`
+	&falseChunk=`0`
+]]%)
+```
 
 
 ### Run the snippet through `\DDTools\Snippet::runSnippet` without DB and eval

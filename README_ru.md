@@ -144,6 +144,7 @@ require_once(
 		* `[+ddH+]` — цветовой тон
 		* `[+ddS+]` — насыщенность
 		* `[+ddL+]` — яркость
+		* `[+ddIsDark+]` — является ли цвет тёмным (`0` || `1`)
 	* Допустимые значения:
 		* `stringChunkName`
 		* `string` — передавать код напрямую без чанка можно начиная значение с `@CODE:`
@@ -167,6 +168,31 @@ require_once(
 
 
 ## Примеры
+
+
+### Установить чёрный или белый цвет шрифта в зависимости от цвета фона
+
+Нам нужны чёрные тексты на светлых фонах и наоборот.
+
+Зададим цвет фона в параметре сниппета `inputColor`:
+
+```
+color: [[ddColorTools?
+	&inputColor=`#007cc3`
+	&result_tpl=`blackOrWhiteColor`
+]];
+```
+
+Код чанка `blackOrWhiteColor`:
+
+```
+hsl(0, 0%, [[ddIf?
+	&operand1=`[+ddIsDark+]`
+	&operator=`bool`
+	&trueChunk=`100`
+	&falseChunk=`0`
+]]%)
+```
 
 
 ### Запустить сниппет через `\DDTools\Snippet::runSnippet` без DB и eval
