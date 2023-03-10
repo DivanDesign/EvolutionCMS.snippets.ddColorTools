@@ -79,7 +79,7 @@ class Snippet extends \DDTools\Snippet {
 	
 	/**
 	 * run
-	 * @version 1.0.7 (2023-03-10)
+	 * @version 1.0.8 (2023-03-10)
 	 * 
 	 * @return {string}
 	 */
@@ -143,7 +143,7 @@ class Snippet extends \DDTools\Snippet {
 				);
 				
 				//Преобразуем цвет в HSL
-				$resultColorHsl = $this->hexToHsl($this->params->inputColor);
+				$resultColorHsl = static::hexToHsl($this->params->inputColor);
 			}
 			
 			foreach(
@@ -257,7 +257,7 @@ class Snippet extends \DDTools\Snippet {
 				break;
 				
 				case 'hex':
-					$result = $this->hsbToHex([
+					$result = static::hsbToHex([
 						'h' => $resultColorHsl->h,
 						's' => $resultColorHsl->s,
 						//TODO: This is incorrect, just temp code
@@ -296,7 +296,7 @@ class Snippet extends \DDTools\Snippet {
 	
 	/**
 	 * hexToHsl
-	 * @version 3.0 (2023-03-10)
+	 * @version 3.0.1 (2023-03-10)
 	 * 
 	 * @param $hex {string} — Color in HEX format without first '#'. @required
 	 * 
@@ -305,7 +305,7 @@ class Snippet extends \DDTools\Snippet {
 	 * @return $result->s {integer}
 	 * @return $result->l {integer}
 	 */
-	private function hexToHsl($hex): \stdClass {
+	private static function hexToHsl($hex): \stdClass {
 		//Получаем цвета в 10чной системе
 		$red = hexdec(substr(
 			$hex,
@@ -400,7 +400,7 @@ class Snippet extends \DDTools\Snippet {
 	
 	/**
 	 * hsbToRgb
-	 * @version 2.0 (2023-03-10)
+	 * @version 2.0.1 (2023-03-10)
 	 * 
 	 * @param $paramHsb {stdClass|arrayAssociative} — Color in HSB format. @required
 	 * @param $paramHsb->h {integer} — Hue. @required
@@ -412,7 +412,7 @@ class Snippet extends \DDTools\Snippet {
 	 * @return $result->g {integer}
 	 * @return $result->b {integer}
 	 */
-	private function hsbToRgb($paramHsb): \stdClass {
+	private static function hsbToRgb($paramHsb): \stdClass {
 		$paramHsb = (object) $paramHsb;
 		
 		$saturation = $paramHsb->s;
@@ -498,7 +498,7 @@ class Snippet extends \DDTools\Snippet {
 	
 	/**
 	 * hsbToHex
-	 * @version 5.0 (2023-03-10)
+	 * @version 5.0.1 (2023-03-10)
 	 * 
 	 * @param $paramHsb {stdClass|arrayAssociative} — Color in HSB format. @required
 	 * @param $paramHsb->h {integer} — Hue. @required
@@ -507,8 +507,8 @@ class Snippet extends \DDTools\Snippet {
 	 * 
 	 * @return $result {string}
 	 */
-	private function hsbToHex($paramHsb): string {
-		$resultRgb = $this->hsbToRgb($paramHsb);
+	private static function hsbToHex($paramHsb): string {
+		$resultRgb = static::hsbToRgb($paramHsb);
 		
 		//Обходим массив и преобразовываем все значения в hex
 		foreach (
