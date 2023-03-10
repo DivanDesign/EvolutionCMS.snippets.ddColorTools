@@ -6,37 +6,70 @@
 ## Использует
 
 * PHP >= 5.6
-* [(MODX)EvolutionCMS.libraries.ddTools](https://code.divandesign.biz/modx/ddtools) >= 0.32
-* [(MODX)EvolutionCMS.snippets.ddGetDocumentField](https://code.divandesign.biz/modx/ddgetdocumentfield) >= 2.10.1
+* [(MODX)EvolutionCMS.libraries.ddTools](https://code.divandesign.biz/modx/ddtools) >= 0.57
+* [(MODX)EvolutionCMS.snippets.ddGetDocumentField](https://code.divandesign.biz/modx/ddgetdocumentfield) >= 2.11.1
 
 
-## Документация
+## Установка
 
 
-### Установка
+### Вручную
 
-Элементы → Сниппеты: Создайте новый сниппет со следующими параметрами:
+
+#### 1. Элементы → Сниппеты: Создайте новый сниппет со следующими параметрами
 
 1. Название сниппета: `ddColorTools`.
-2. Описание: `<b>3.0</b> Преобразует цвет в соответствии со смещением по тону, яркости или насыщенности.`.
+2. Описание: `<b>3.1</b> Преобразует цвет в соответствии со смещением по тону, яркости или насыщенности.`.
 3. Категория: `Core`.
 4. Анализировать DocBlock: `no`.
 5. Код сниппета (php): Вставьте содержимое файла `ddColorTools_snippet.php` из архива.
 
 
-### Описание параметров
+#### 2. Элементы → Управление файлами
+
+1. Создайте новую папку `assets/snippets/ddColorTools/`.
+2. Извлеките содержимое архива в неё (кроме файла `ddColorTools_snippet.php`).
 
 
-#### Исходный цвет
+### Используя [(MODX)EvolutionCMS.libraries.ddInstaller](https://github.com/DivanDesign/EvolutionCMS.libraries.ddInstaller)
+
+Просто вызовите следующий код в своих исходинках или модуле [Console](https://github.com/vanchelo/MODX-Evolution-Ajax-Console):
+
+```php
+//Подключение (MODX)EvolutionCMS.libraries.ddInstaller
+require_once(
+	$modx->getConfig('base_path') .
+	'assets/libs/ddInstaller/require.php'
+);
+
+//Установка (MODX)EvolutionCMS.snippets.ddColorTools
+\DDInstaller::install([
+	'url' => 'https://github.com/DivanDesign/EvolutionCMS.snippets.ddColorTools',
+	'type' => 'snippet'
+]);
+```
+
+* Если `ddColorTools` отсутствует на вашем сайте, `ddInstaller` просто установит его.
+* Если `ddColorTools` уже есть на вашем сайте, `ddInstaller` проверит его версию и обновит, если нужно. 
+
+
+## Описание параметров
+
+
+### Исходный цвет
 
 * `inputColor`
-	* Описание: Исходный цвет в HEX или HSL.  
+	* Описание: Исходный цвет в HEX, HSL или HSB/HSV.  
 		Значение регистронезависимо.  
 		Примеры валидных значений:
 		* `ffffff`
 		* `#FFFFFF`
 		* `hsl(0, 0%, 100%)`
 		* `HSL(0, 0, 100)`
+		* `hsb(0, 0%, 100%)`
+		* `hsv(0, 0%, 100%)`
+		* `hsb(0, 0, 100)`
+		* `hsv(0, 0, 100)`
 	* Допустимые значения: `string`
 	* **Обязателен**
 	
@@ -53,7 +86,7 @@
 	* Значение по умолчанию: —
 
 
-#### Модификация цвета
+### Модификация цвета
 
 Все параметры могут содержать следующие специальные операторы:
 1. `+` (например, `+10`) — прибавить
@@ -93,7 +126,7 @@
 	* **Обязателен**
 
 
-#### Вывод результата
+### Вывод результата
 
 * `result_outputFormat`
 	* Описание: В каком формате возвращать цвет?  
@@ -101,6 +134,7 @@
 	* Допустимые значения:
 		* `'hex'`
 		* `'hsl'`
+		* `'rgb'`
 	* Значение по умолчанию: `'hsl'`
 	
 * `result_tpl`
@@ -110,6 +144,7 @@
 		* `[+ddH+]` — цветовой тон
 		* `[+ddS+]` — насыщенность
 		* `[+ddL+]` — яркость
+		* `[+ddIsDark+]` — является ли цвет тёмным (`0` || `1`)
 	* Допустимые значения:
 		* `stringChunkName`
 		* `string` — передавать код напрямую без чанка можно начиная значение с `@CODE:`
@@ -123,12 +158,69 @@
 		* `{"some": {"a": "one", "b": "two"} }` => `[+some.a+]`, `[+some.b+]`.
 		* `{"some": ["one", "two"] }` => `[+some.0+]`, `[+some.1+]`.
 	* Допустимые значения:
-		* `stringJsonObject` — as [JSON](https://en.wikipedia.org/wiki/JSON)
-		* `stringQueryFormated` — as [Query string](https://en.wikipedia.org/wiki/Query_string)
+		* `stringJsonObject` — в виде [JSON](https://ru.wikipedia.org/wiki/JSON)
+		* `stringHjsonObject` — в виде [HJSON](https://hjson.github.io/)
+		* `stringQueryFormatted` — в виде [Query string](https://en.wikipedia.org/wiki/Query_string)
+		* Также может быть задан, как нативный PHP объект или массив (например, для вызовов через `$modx->runSnippet`).
+			* `arrayAssociative`
+			* `object`
 	* Значение по умолчанию: —
 
 
-## [Home page →](https://code.divandesign.biz/modx/ddcolortools)
+## Примеры
+
+
+### Установить чёрный или белый цвет шрифта в зависимости от цвета фона
+
+Нам нужны чёрные тексты на светлых фонах и наоборот.
+
+Зададим цвет фона в параметре сниппета `inputColor`:
+
+```
+color: [[ddColorTools?
+	&inputColor=`#007cc3`
+	&result_tpl=`blackOrWhiteColor`
+]];
+```
+
+Код чанка `blackOrWhiteColor`:
+
+```
+hsl(0, 0%, [[ddIf?
+	&operand1=`[+ddIsDark+]`
+	&operator=`bool`
+	&trueChunk=`100`
+	&falseChunk=`0`
+]]%)
+```
+
+
+### Запустить сниппет через `\DDTools\Snippet::runSnippet` без DB и eval
+
+```php
+//Подключение (MODX)EvolutionCMS.libraries.ddTools
+require_once(
+	$modx->getConfig('base_path') .
+	'assets/libs/ddTools/modx.ddtools.class.php'
+);
+
+//Запуск (MODX)EvolutionCMS.snippets.ddColorTools
+\DDTools\Snippet::runSnippet([
+	'name' => 'ddColorTools',
+	'params' => [
+		'inputColor' => '#000000',
+		'result_tpl' => 'colorTpl'
+	]
+]);
+```
+
+
+## Ссылки
+
+* [Home page](https://code.divandesign.ru/modx/ddcolortools)
+* [Telegram chat](https://t.me/dd_code)
+* [Packagist](https://packagist.org/packages/dd/evolutioncms-snippets-ddcolortools)
+* [GitHub](https://github.com/DivanDesign/EvolutionCMS.snippets.ddColorTools)
 
 
 <link rel="stylesheet" type="text/css" href="https://DivanDesign.ru/assets/files/ddMarkdown.css" />
