@@ -394,17 +394,20 @@ class Snippet extends \DDTools\Snippet {
 	}
 	
 	/**
-	 * hslToHex
-	 * @version 4.0 (2023-03-10)
+	 * hslToRgb
+	 * @version 1.0 (2023-03-10)
 	 * 
 	 * @param $paramHsl {stdClass|arrayAssociative} — Color in HSL format. @required
 	 * @param $paramHsl->h {integer} — Hue. @required
 	 * @param $paramHsl->s {integer} — Saturation. @required
 	 * @param $paramHsl->l {integer} — Lightness. @required
 	 * 
-	 * @return $result {string}
+	 * @return $result {stdClass}
+	 * @return $result->r {integer}
+	 * @return $result->g {integer}
+	 * @return $result->b {integer}
 	 */
-	private function hslToHex($paramHsl): string {
+	private function hslToRgb($paramHsl): \stdClass {
 		$paramHsl = (object) $paramHsl;
 		
 		$saturation = $paramHsl->s;
@@ -474,13 +477,41 @@ class Snippet extends \DDTools\Snippet {
 			}
 		}
 		
-		//Обходим массив и преобразовываем все значения в hex (предварительно переводим из системы счисления от 0 до 100 в от 0 до 255)
+		//Переводим из системы счисления от 0 до 100 в от 0 до 255
 		foreach (
 			$resultRgb as
 			$key =>
 			$val
 		){
-			$resultRgb->{$key} = dechex(round($val * 255 / 100));
+			$resultRgb->{$key} = intval(
+				round($val / 100 * 255)
+			);
+		}
+		
+		return $resultRgb;
+	}
+	
+	/**
+	 * hslToHex
+	 * @version 4.0.1 (2023-03-10)
+	 * 
+	 * @param $paramHsl {stdClass|arrayAssociative} — Color in HSL format. @required
+	 * @param $paramHsl->h {integer} — Hue. @required
+	 * @param $paramHsl->s {integer} — Saturation. @required
+	 * @param $paramHsl->l {integer} — Lightness. @required
+	 * 
+	 * @return $result {string}
+	 */
+	private function hslToHex($paramHsl): string {
+		$resultRgb = $this->hslToRgb($paramHsl);
+		
+		//Обходим массив и преобразовываем все значения в hex
+		foreach (
+			$resultRgb as
+			$key =>
+			$val
+		){
+			$resultRgb->{$key} = dechex($val);
 			
 			//Если не хватает ноля, дописываем
 			if (strlen($resultRgb->{$key}) < 2){
