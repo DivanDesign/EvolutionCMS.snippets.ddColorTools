@@ -79,7 +79,7 @@ class Snippet extends \DDTools\Snippet {
 	
 	/**
 	 * run
-	 * @version 1.2 (2023-03-10)
+	 * @version 1.3 (2023-03-10)
 	 * 
 	 * @return {string}
 	 */
@@ -281,6 +281,22 @@ class Snippet extends \DDTools\Snippet {
 					$result = static::hsbToHex(
 						static::hslToHsb($resultColorHsl)
 					);
+				break;
+				
+				case 'rgb':
+					$result = static::hsbToRgb(
+						static::hslToHsb($resultColorHsl)
+					);
+					
+					$result =
+						'rgb(' .
+						$result->r .
+						',' .
+						$result->g .
+						',' .
+						$result->b .
+						')'
+					;
 				break;
 			}
 			

@@ -134,6 +134,7 @@ All parameters can contain the following special operators:
 	* Valid values:
 		* `'hex'`
 		* `'hsl'`
+		* `'rgb'`
 	* Default value: `'hsl'`
 	
 * `result_tpl`
