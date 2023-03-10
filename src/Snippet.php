@@ -79,7 +79,7 @@ class Snippet extends \DDTools\Snippet {
 	
 	/**
 	 * run
-	 * @version 1.0.9 (2023-03-10)
+	 * @version 1.1 (2023-03-10)
 	 * 
 	 * @return {string}
 	 */
@@ -101,17 +101,27 @@ class Snippet extends \DDTools\Snippet {
 				'l' => 100
 			];
 			
-			//If input color set as HSL
+			//If input color set as HSL || HSB/HSV
 			if (
 				strpos(
 					$this->params->inputColor,
-					'hsl'
+					'hs'
 				) !== false
 			){
+				$isInputColorHsl =
+					strpos(
+						$this->params->inputColor,
+						'hsl'
+					) !==
+					false
+				;
+				
 				//Remove unwanted chars
 				$this->params->inputColor = str_replace(
 					[
 						'hsl',
+						'hsb',
+						'hsv',
 						'(',
 						')',
 						//Space
@@ -128,11 +138,21 @@ class Snippet extends \DDTools\Snippet {
 					$this->params->inputColor
 				);
 				
-				$resultColorHsl = (object) [
-					'h' => $this->params->inputColor[0],
-					's' => $this->params->inputColor[1],
-					'l' => $this->params->inputColor[2]
-				];
+				//If input color set as HSL
+				if ($isInputColorHsl){
+					$resultColorHsl = (object) [
+						'h' => $this->params->inputColor[0],
+						's' => $this->params->inputColor[1],
+						'l' => $this->params->inputColor[2]
+					];
+				//As HSB/HSV	
+				}else{
+					$resultColorHsl = static::hsbToHsl([
+						'h' => $this->params->inputColor[0],
+						's' => $this->params->inputColor[1],
+						'b' => $this->params->inputColor[2]
+					]);
+				}
 			//AS RGB
 			}else{
 				//Удалим из цвета символ '#'

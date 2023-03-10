@@ -59,13 +59,17 @@ require_once(
 ### Input color
 
 * `inputColor`
-	* Desctription: Input color as HEX or HSL.  
+	* Desctription: Input color as HEX, HSL or HSB/HSV.  
 		Case-insensitive.    
 		Valid format examples:
 		* `ffffff`
 		* `#FFFFFF`
 		* `hsl(0, 0%, 100%)`
 		* `HSL(0, 0, 100)`
+		* `hsb(0, 0%, 100%)`
+		* `hsv(0, 0%, 100%)`
+		* `hsb(0, 0, 100)`
+		* `hsv(0, 0, 100)`
 	* Valid values: `string`
 	* **Required**
 	
