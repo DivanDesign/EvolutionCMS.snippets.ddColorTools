@@ -79,7 +79,7 @@ class Snippet extends \DDTools\Snippet {
 	
 	/**
 	 * run
-	 * @version 1.0.6 (2023-03-10)
+	 * @version 1.0.7 (2023-03-10)
 	 * 
 	 * @return {string}
 	 */
@@ -257,7 +257,12 @@ class Snippet extends \DDTools\Snippet {
 				break;
 				
 				case 'hex':
-					$result = $this->hslToHex($resultColorHsl);
+					$result = $this->hsbToHex([
+						'h' => $resultColorHsl->h,
+						's' => $resultColorHsl->s,
+						//TODO: This is incorrect, just temp code
+						'b' => $resultColorHsl->l,
+					]);
 				break;
 			}
 			
@@ -394,34 +399,34 @@ class Snippet extends \DDTools\Snippet {
 	}
 	
 	/**
-	 * hslToRgb
-	 * @version 1.0 (2023-03-10)
+	 * hsbToRgb
+	 * @version 2.0 (2023-03-10)
 	 * 
-	 * @param $paramHsl {stdClass|arrayAssociative} — Color in HSL format. @required
-	 * @param $paramHsl->h {integer} — Hue. @required
-	 * @param $paramHsl->s {integer} — Saturation. @required
-	 * @param $paramHsl->l {integer} — Lightness. @required
+	 * @param $paramHsb {stdClass|arrayAssociative} — Color in HSB format. @required
+	 * @param $paramHsb->h {integer} — Hue. @required
+	 * @param $paramHsb->s {integer} — Saturation. @required
+	 * @param $paramHsb->b {integer} — Brightness. @required
 	 * 
 	 * @return $result {stdClass}
 	 * @return $result->r {integer}
 	 * @return $result->g {integer}
 	 * @return $result->b {integer}
 	 */
-	private function hslToRgb($paramHsl): \stdClass {
-		$paramHsl = (object) $paramHsl;
+	private function hsbToRgb($paramHsb): \stdClass {
+		$paramHsb = (object) $paramHsb;
 		
-		$saturation = $paramHsl->s;
-		$lightness = $paramHsl->l;
+		$saturation = $paramHsb->s;
+		$brightness = $paramHsb->b;
 		
 		$resultRgb = new \stdClass();
 		
 		//Если цвет серый
 		if($saturation == 0){
-			$resultRgb->r = $lightness;
-			$resultRgb->g = $lightness;
-			$resultRgb->b = $lightness;
+			$resultRgb->r = $brightness;
+			$resultRgb->g = $brightness;
+			$resultRgb->b = $brightness;
 		}else{
-			$hue = ($paramHsl->h + 360) % 360;
+			$hue = ($paramHsb->h + 360) % 360;
 			$hue2 = floor($hue / 60);
 			
 			$dif =
@@ -429,7 +434,7 @@ class Snippet extends \DDTools\Snippet {
 				60
 			;
 			$mid1 =
-				$lightness *
+				$brightness *
 				(
 					100 -
 					$saturation * $dif
@@ -437,7 +442,7 @@ class Snippet extends \DDTools\Snippet {
 				100
 			;
 			$mid2 =
-				$lightness *
+				$brightness *
 				(
 					100 -
 					$saturation * (1 - $dif)
@@ -445,33 +450,33 @@ class Snippet extends \DDTools\Snippet {
 				100
 			;
 			$min =
-				$lightness *
+				$brightness *
 				(100 - $saturation) /
 				100
 			;
 			
 			if($hue2 == 0){
-				$resultRgb->r = $lightness;
+				$resultRgb->r = $brightness;
 				$resultRgb->g = $mid2;
 				$resultRgb->b = $min;
 			}elseif($hue2 == 1){
 				$resultRgb->r = $mid1;
-				$resultRgb->g = $lightness;
+				$resultRgb->g = $brightness;
 				$resultRgb->b = $min;
 			}elseif($hue2 == 2){
 				$resultRgb->r = $min;
-				$resultRgb->g = $lightness;
+				$resultRgb->g = $brightness;
 				$resultRgb->b = $mid2;
 			}elseif($hue2 == 3){
 				$resultRgb->r = $min;
 				$resultRgb->g = $mid1;
-				$resultRgb->b = $lightness;
+				$resultRgb->b = $brightness;
 			}elseif($hue2 == 4){
 				$resultRgb->r = $mid2;
 				$resultRgb->g = $min;
-				$resultRgb->b = $lightness;
+				$resultRgb->b = $brightness;
 			}else{
-				$resultRgb->r = $lightness;
+				$resultRgb->r = $brightness;
 				$resultRgb->g = $min;
 				$resultRgb->b = $mid1;
 			}
@@ -492,18 +497,18 @@ class Snippet extends \DDTools\Snippet {
 	}
 	
 	/**
-	 * hslToHex
-	 * @version 4.0.1 (2023-03-10)
+	 * hsbToHex
+	 * @version 5.0 (2023-03-10)
 	 * 
-	 * @param $paramHsl {stdClass|arrayAssociative} — Color in HSL format. @required
-	 * @param $paramHsl->h {integer} — Hue. @required
-	 * @param $paramHsl->s {integer} — Saturation. @required
-	 * @param $paramHsl->l {integer} — Lightness. @required
+	 * @param $paramHsb {stdClass|arrayAssociative} — Color in HSB format. @required
+	 * @param $paramHsb->h {integer} — Hue. @required
+	 * @param $paramHsb->s {integer} — Saturation. @required
+	 * @param $paramHsb->b {integer} — Brightness. @required
 	 * 
 	 * @return $result {string}
 	 */
-	private function hslToHex($paramHsl): string {
-		$resultRgb = $this->hslToRgb($paramHsl);
+	private function hsbToHex($paramHsb): string {
+		$resultRgb = $this->hsbToRgb($paramHsb);
 		
 		//Обходим массив и преобразовываем все значения в hex
 		foreach (
