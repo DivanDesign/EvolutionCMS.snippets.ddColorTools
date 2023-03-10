@@ -494,8 +494,42 @@ class Snippet extends \DDTools\Snippet {
 	}
 	
 	/**
+	 * rgbToHex
+	 * @version 1.0 (2023-03-10)
+	 * 
+	 * @param $paramRgb {stdClass|arrayAssociative} — Color in RGB format. @required
+	 * @param $paramRgb->r {integer} — Hue. @required
+	 * @param $paramRgb->g {integer} — Saturation. @required
+	 * @param $paramRgb->b {integer} — Brightness. @required
+	 * 
+	 * @return $result {string}
+	 */
+	private static function rgbToHex($paramRgb): string {
+		$paramRgb = (object) $paramRgb;
+		
+		//Обходим массив и преобразовываем все значения в hex
+		foreach (
+			$paramRgb as
+			$key =>
+			$val
+		){
+			$paramRgb->{$key} = dechex($val);
+			
+			//Если не хватает ноля, дописываем
+			if (strlen($paramRgb->{$key}) < 2){
+				$paramRgb->{$key} = '0' . $paramRgb->{$key};
+			}
+		}
+		
+		return implode(
+			'',
+			(array) $paramRgb
+		);
+	}
+	
+	/**
 	 * hsbToHex
-	 * @version 5.0.1 (2023-03-10)
+	 * @version 5.0.2 (2023-03-10)
 	 * 
 	 * @param $paramHsb {stdClass|arrayAssociative} — Color in HSB format. @required
 	 * @param $paramHsb->h {integer} — Hue. @required
@@ -505,25 +539,8 @@ class Snippet extends \DDTools\Snippet {
 	 * @return $result {string}
 	 */
 	private static function hsbToHex($paramHsb): string {
-		$resultRgb = static::hsbToRgb($paramHsb);
-		
-		//Обходим массив и преобразовываем все значения в hex
-		foreach (
-			$resultRgb as
-			$key =>
-			$val
-		){
-			$resultRgb->{$key} = dechex($val);
-			
-			//Если не хватает ноля, дописываем
-			if (strlen($resultRgb->{$key}) < 2){
-				$resultRgb->{$key} = '0' . $resultRgb->{$key};
-			}
-		}
-		
-		return implode(
-			'',
-			(array) $resultRgb
+		return static::rgbToHex(
+			static::hsbToRgb($paramHsb)
 		);
 	}
 	
