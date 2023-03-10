@@ -79,7 +79,7 @@ class Snippet extends \DDTools\Snippet {
 	
 	/**
 	 * run
-	 * @version 1.0.8 (2023-03-10)
+	 * @version 1.0.9 (2023-03-10)
 	 * 
 	 * @return {string}
 	 */
@@ -257,12 +257,9 @@ class Snippet extends \DDTools\Snippet {
 				break;
 				
 				case 'hex':
-					$result = static::hsbToHex([
-						'h' => $resultColorHsl->h,
-						's' => $resultColorHsl->s,
-						//TODO: This is incorrect, just temp code
-						'b' => $resultColorHsl->l,
-					]);
+					$result = static::hsbToHex(
+						static::hslToHsb($resultColorHsl)
+					);
 				break;
 			}
 			
@@ -528,5 +525,97 @@ class Snippet extends \DDTools\Snippet {
 			'',
 			(array) $resultRgb
 		);
+	}
+	
+	/**
+	 * hsbToHsl
+	 * @version 1.0 (2023-03-10)
+	 * 
+	 * @param $paramHsb {stdClass|arrayAssociative} — Color in HSB format. @required
+	 * @param $paramHsb->h {integer} — Hue. @required
+	 * @param $paramHsb->s {integer} — Saturation. @required
+	 * @param $paramHsb->b {integer} — Brightness. @required
+	 * 
+	 * @return $result {stdClass}
+	 * @return $result->h {integer}
+	 * @return $result->s {integer}
+	 * @return $result->l {integer}
+	 */
+	private static function hsbToHsl($paramHsb): \stdClass {
+		$paramHsb = (object) $paramHsb;
+		
+		$resultHsl = (object) [
+			'h' => $paramHsb->h,
+			's' => $paramHsb->s,
+			//Determine the lightness in the range [0, 100]
+			'l' => intval(
+				(2 - $paramHsb->s / 100) *
+				$paramHsb->b /
+				2
+			)
+		];
+		
+		if ($resultHsl->l != 0){
+			if ($resultHsl->l == 100){
+				$resultHsl->s = 0;
+			}else{
+				$resultHsl->s = intval(
+					$resultHsl->s * $paramHsb->b /
+					(
+						$resultHsl->l < 50 ?
+						$resultHsl->l * 2 :
+						200 - $resultHsl->l * 2
+					)
+				);
+			}
+		}
+		
+		return $resultHsl;
+	}
+	
+	/**
+	 * hslToHsb
+	 * @version 1.0 (2023-03-10)
+	 * 
+	 * @param $paramHsl {stdClass|arrayAssociative} — Color in HSL format. @required
+	 * @param $paramHsl->h {integer} — Hue. @required
+	 * @param $paramHsl->s {integer} — Saturation. @required
+	 * @param $paramHsl->l {integer} — Lightness. @required
+	 * 
+	 * @return $result {stdClass}
+	 * @return $result->h {integer}
+	 * @return $result->s {integer}
+	 * @return $result->b {integer}
+	 */
+	private static function hslToHsb($paramHsl): \stdClass {
+		$paramHsl = (object) $paramHsl;
+		
+		$resultHsb = (object) [
+			'h' => $paramHsl->h,
+			's' => 0,
+			'b' => 0
+		];
+		
+		if ($paramHsl->l != 0){
+			$temp =
+				$paramHsl->s *
+				(
+					$paramHsl->l < 50 ?
+					$paramHsl->l :
+					100 - $paramHsl->l
+				) /
+				100
+			;
+			
+			$resultHsb->b = intval(round(
+				$paramHsl->l + $temp
+			));
+			
+			$resultHsb->s = intval(round(
+				200 * $temp / $resultHsb->b
+			));
+		}
+		
+		return $resultHsb;
 	}
 }
