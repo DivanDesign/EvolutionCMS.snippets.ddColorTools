@@ -25,7 +25,7 @@ class Snippet extends \DDTools\Snippet {
 		
 	/**
 	 * prepareParams
-	 * @version 1.0 (2023-03-10)
+	 * @version 1.0.1 (2023-05-14)
 	 * 
 	 * @param $this->params {stdClass|arrayAssociative|stringJsonObject|stringHjsonObject|stringQueryFormatted}
 	 * 
@@ -74,7 +74,7 @@ class Snippet extends \DDTools\Snippet {
 			);
 		}
 		
-		$this->params->result_tpl = \ddTools::$modx->getTpl($this->params->result_tpl);
+		$this->params->result_tpl = \ddTools::getTpl($this->params->result_tpl);
 	}
 	
 	/**
