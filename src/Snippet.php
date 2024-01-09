@@ -354,27 +354,29 @@ class Snippet extends \DDTools\Snippet {
 	
 	/**
 	 * hexToHsl
-	 * @version 3.0.1 (2023-03-10$this->params->inputColor$hex {string} — Color in HEX format without first '#'. @required
+	 * @version 3.0.2 (2024-01-09)
+	 * 
+	 * @param $hexString {string} — Color in HEX format without first '#'. @required
 	 * 
 	 * @return $result {stdClass}
 	 * @return $result->h {integer}
 	 * @return $result->s {integer}
 	 * @return $result->l {integer}
 	 */
-	private static function hexToHsl($hex): \stdClass {
+	private static function hexToHsl($hexString): \stdClass {
 		//Получаем цвета в 10чной системе
 		$red = hexdec(substr(
-			$hex,
+			$hexString,
 			0,
 			2
 		));
 		$green = hexdec(substr(
-			$hex,
+			$hexString,
 			2,
 			2
 		));
 		$blue = hexdec(substr(
-			$hex,
+			$hexString,
 			4,
 			2
 		));
