@@ -59,15 +59,19 @@ require_once(
 ### Input color
 
 * `inputColor`
-	* Desctription: Input color as HEX, HSL or HSB/HSV.  
+	* Desctription: Input color as HEX, HSL or HSB/HSV, with or without alpha-channel.  
 		Case-insensitive.    
 		Valid format examples:
 		* `ffffff`
 		* `#FFFFFF`
+		* `#FFFFFFFF`
 		* `hsl(0, 0%, 100%)`
+		* `hsla(0, 0%, 100%)`
 		* `HSL(0, 0, 100)`
 		* `hsb(0, 0%, 100%)`
+		* `hsba(0, 0%, 100%)`
 		* `hsv(0, 0%, 100%)`
+		* `hsva(0, 0%, 100%)`
 		* `hsb(0, 0, 100)`
 		* `hsv(0, 0, 100)`
 	* Valid values: `string`
@@ -124,6 +128,16 @@ All parameters can contain the following special operators:
 	* Desctription: Offset of the lightness in persents (`[-100; +100]`).
 	* Valid values: `string`
 	* **Required**
+	
+* `offset_a`
+	* Desctription: Operations of the alpha-channel offset separated by commas.
+	* Valid values: `stringCommaSeparated`
+	* Default value: `'+0'`
+	
+* `offset_a[i]`
+	* Desctription: Offset of the alpha-channel in persents (`[-100; +100]`).
+	* Valid values: `string`
+	* **Required**
 
 
 ### Output
@@ -144,6 +158,7 @@ All parameters can contain the following special operators:
 		* `[+ddH+]` — hue
 		* `[+ddS+]` — saturation
 		* `[+ddL+]` — lightness
+		* `[+ddA+]` — alpha-channel
 		* `[+ddIsDark+]` — is color dark (`0` || `1`)?
 	* Valid values:
 		* `stringChunkName`
