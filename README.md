@@ -6,8 +6,8 @@ Converts the color to match the offset in tone, brightness, or saturation.
 ## Requires
 
 * PHP >= 5.6
-* [(MODX)EvolutionCMS.libraries.ddTools](https://code.divandesign.biz/modx/ddtools) >= 0.57
-* [(MODX)EvolutionCMS.snippets.ddGetDocumentField](https://code.divandesign.biz/modx/ddgetdocumentfield) >= 2.11.1
+* [(MODX)EvolutionCMS.libraries.ddTools](https://code.divandesign.ru/modx/ddtools) >= 0.60
+* [(MODX)EvolutionCMS.snippets.ddGetDocumentField](https://code.divandesign.ru/modx/ddgetdocumentfield) >= 2.11.1
 
 
 ## Installation
@@ -19,7 +19,7 @@ Converts the color to match the offset in tone, brightness, or saturation.
 #### 1. Elements → Snippets: Create a new snippet with the following data
 
 1. Snippet name: `ddColorTools`.
-2. Description: `<b>3.1</b> Converts the color to match the offset in tone, brightness, or saturation.`.
+2. Description: `<b>3.2</b> Converts the color to match the offset in tone, brightness, or saturation.`.
 3. Category: `Core`.
 4. Parse DocBlock: `no`.
 5. Snippet code (php): Insert content of the `ddColorTools_snippet.php` file from the archive.
@@ -59,15 +59,19 @@ require_once(
 ### Input color
 
 * `inputColor`
-	* Desctription: Input color as HEX, HSL or HSB/HSV.  
+	* Desctription: Input color as HEX, HSL or HSB/HSV, with or without alpha-channel.  
 		Case-insensitive.    
 		Valid format examples:
 		* `ffffff`
 		* `#FFFFFF`
+		* `#FFFFFFFF`
 		* `hsl(0, 0%, 100%)`
+		* `hsla(0, 0%, 100%)`
 		* `HSL(0, 0, 100)`
 		* `hsb(0, 0%, 100%)`
+		* `hsba(0, 0%, 100%)`
 		* `hsv(0, 0%, 100%)`
+		* `hsva(0, 0%, 100%)`
 		* `hsb(0, 0, 100)`
 		* `hsv(0, 0, 100)`
 	* Valid values: `string`
@@ -124,6 +128,16 @@ All parameters can contain the following special operators:
 	* Desctription: Offset of the lightness in persents (`[-100; +100]`).
 	* Valid values: `string`
 	* **Required**
+	
+* `offset_a`
+	* Desctription: Operations of the alpha-channel offset separated by commas.
+	* Valid values: `stringCommaSeparated`
+	* Default value: `'+0'`
+	
+* `offset_a[i]`
+	* Desctription: Offset of the alpha-channel in persents (`[-100; +100]`).
+	* Valid values: `string`
+	* **Required**
 
 
 ### Output
@@ -144,6 +158,7 @@ All parameters can contain the following special operators:
 		* `[+ddH+]` — hue
 		* `[+ddS+]` — saturation
 		* `[+ddL+]` — lightness
+		* `[+ddA+]` — alpha-channel
 		* `[+ddIsDark+]` — is color dark (`0` || `1`)?
 	* Valid values:
 		* `stringChunkName`
@@ -217,10 +232,10 @@ require_once(
 
 ## Links
 
-* [Home page](https://code.divandesign.biz/modx/ddcolortools)
+* [Home page](https://code.divandesign.ru/modx/ddcolortools)
 * [Telegram chat](https://t.me/dd_code)
 * [Packagist](https://packagist.org/packages/dd/evolutioncms-snippets-ddcolortools)
 * [GitHub](https://github.com/DivanDesign/EvolutionCMS.snippets.ddColorTools)
 
 
-<link rel="stylesheet" type="text/css" href="https://DivanDesign.ru/assets/files/ddMarkdown.css" />
+<link rel="stylesheet" type="text/css" href="https://raw.githack.com/DivanDesign/CSS.ddMarkdown/master/style.min.css" />

@@ -6,8 +6,8 @@
 ## Использует
 
 * PHP >= 5.6
-* [(MODX)EvolutionCMS.libraries.ddTools](https://code.divandesign.biz/modx/ddtools) >= 0.57
-* [(MODX)EvolutionCMS.snippets.ddGetDocumentField](https://code.divandesign.biz/modx/ddgetdocumentfield) >= 2.11.1
+* [(MODX)EvolutionCMS.libraries.ddTools](https://code.divandesign.ru/modx/ddtools) >= 0.60
+* [(MODX)EvolutionCMS.snippets.ddGetDocumentField](https://code.divandesign.ru/modx/ddgetdocumentfield) >= 2.11.1
 
 
 ## Установка
@@ -19,7 +19,7 @@
 #### 1. Элементы → Сниппеты: Создайте новый сниппет со следующими параметрами
 
 1. Название сниппета: `ddColorTools`.
-2. Описание: `<b>3.1</b> Преобразует цвет в соответствии со смещением по тону, яркости или насыщенности.`.
+2. Описание: `<b>3.2</b> Преобразует цвет в соответствии со смещением по тону, яркости или насыщенности.`.
 3. Категория: `Core`.
 4. Анализировать DocBlock: `no`.
 5. Код сниппета (php): Вставьте содержимое файла `ddColorTools_snippet.php` из архива.
@@ -59,15 +59,19 @@ require_once(
 ### Исходный цвет
 
 * `inputColor`
-	* Описание: Исходный цвет в HEX, HSL или HSB/HSV.  
+	* Описание: Исходный цвет в HEX, HSL или HSB/HSV, с альфа-каналом или без.  
 		Значение регистронезависимо.  
 		Примеры валидных значений:
 		* `ffffff`
 		* `#FFFFFF`
+		* `#FFFFFFFF`
 		* `hsl(0, 0%, 100%)`
+		* `hsla(0, 0%, 100%)`
 		* `HSL(0, 0, 100)`
 		* `hsb(0, 0%, 100%)`
+		* `hsba(0, 0%, 100%)`
 		* `hsv(0, 0%, 100%)`
+		* `hsva(0, 0%, 100%)`
 		* `hsb(0, 0, 100)`
 		* `hsv(0, 0, 100)`
 	* Допустимые значения: `string`
@@ -124,6 +128,16 @@ require_once(
 	* Описание: Смещение яркости в процентах (`[-100; +100]`).
 	* Допустимые значения: `string`
 	* **Обязателен**
+	
+* `offset_a`
+	* Описание: Операции смещения альфа-канала через запятую.
+	* Допустимые значения: `stringCommaSeparated`
+	* Значение по умолчанию: `'+0'`
+	
+* `offset_a[i]`
+	* Описание: Смещение альфа-канала в процентах (`[-100; +100]`).
+	* Допустимые значения: `string`
+	* **Обязателен**
 
 
 ### Вывод результата
@@ -144,6 +158,7 @@ require_once(
 		* `[+ddH+]` — цветовой тон
 		* `[+ddS+]` — насыщенность
 		* `[+ddL+]` — яркость
+		* `[+ddA+]` — альфа-канал
 		* `[+ddIsDark+]` — является ли цвет тёмным (`0` || `1`)
 	* Допустимые значения:
 		* `stringChunkName`
@@ -223,4 +238,4 @@ require_once(
 * [GitHub](https://github.com/DivanDesign/EvolutionCMS.snippets.ddColorTools)
 
 
-<link rel="stylesheet" type="text/css" href="https://DivanDesign.ru/assets/files/ddMarkdown.css" />
+<link rel="stylesheet" type="text/css" href="https://raw.githack.com/DivanDesign/CSS.ddMarkdown/master/style.min.css" />

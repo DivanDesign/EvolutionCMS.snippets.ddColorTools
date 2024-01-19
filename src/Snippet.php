@@ -3,7 +3,7 @@ namespace ddColorTools;
 
 class Snippet extends \DDTools\Snippet {
 	protected
-		$version = '3.1.0',
+		$version = '3.2.0',
 		
 		$params = [
 			//Defaults
@@ -13,6 +13,7 @@ class Snippet extends \DDTools\Snippet {
 			'offset_h' => '+0',
 			'offset_s' => '+0',
 			'offset_l' => '+0',
+			'offset_a' => '+0',
 			'result_outputFormat' => 'hsl',
 			'result_tpl' => '',
 			'result_tpl_placeholders' => [],
@@ -25,7 +26,7 @@ class Snippet extends \DDTools\Snippet {
 		
 	/**
 	 * prepareParams
-	 * @version 1.0 (2023-03-10)
+	 * @version 1.1 (2024-01-19)
 	 * 
 	 * @param $this->params {stdClass|arrayAssociative|stringJsonObject|stringHjsonObject|stringQueryFormatted}
 	 * 
@@ -65,6 +66,7 @@ class Snippet extends \DDTools\Snippet {
 				'offset_h',
 				'offset_s',
 				'offset_l',
+				'offset_a',
 			] as
 			$paramName
 		){
@@ -74,12 +76,12 @@ class Snippet extends \DDTools\Snippet {
 			);
 		}
 		
-		$this->params->result_tpl = \ddTools::$modx->getTpl($this->params->result_tpl);
+		$this->params->result_tpl = \ddTools::getTpl($this->params->result_tpl);
 	}
 	
 	/**
 	 * run
-	 * @version 1.4 (2023-03-10)
+	 * @version 1.5 (2024-01-19)
 	 * 
 	 * @return {string}
 	 */
@@ -92,16 +94,32 @@ class Snippet extends \DDTools\Snippet {
 			$hslRange = (object) [
 				'h' => $this->params->offset_h,
 				's' => $this->params->offset_s,
-				'l' => $this->params->offset_l
+				'l' => $this->params->offset_l,
+				'a' => $this->params->offset_l,
 			];
 			
 			$hslMax = (object) [
 				'h' => 360,
 				's' => 100,
-				'l' => 100
+				'l' => 100,
+				'a' => 100,
 			];
 			
 			$resultColorHsl = static::stringToHsl($this->params->inputColor);
+			
+			$isAlphaUsed = \DDTools\ObjectTools::isPropExists([
+				'object' => $resultColorHsl,
+				'propName' => 'a'
+			]);
+			
+			if (
+				!$isAlphaUsed
+				&& $this->params->offset_a != '+0'
+			){
+				$isAlphaUsed = true;
+				
+				$resultColorHsl->a = 100;
+			}
 			
 			foreach(
 				$resultColorHsl as
@@ -199,17 +217,32 @@ class Snippet extends \DDTools\Snippet {
 			if($resultColorHsl->l > $hslMax->l){
 				$resultColorHsl->l = $hslMax->l;
 			}
+			if(
+				$isAlphaUsed
+				&& $resultColorHsl->a > $hslMax->a
+			){
+				$resultColorHsl->a = $hslMax->a;
+			}
 			
 			switch($this->params->result_outputFormat){
 				case 'hsl':
 					$result =
-						'hsl(' .
-						$resultColorHsl->h .
-						',' .
-						$resultColorHsl->s .
-						'%,' .
-						$resultColorHsl->l .
-						'%)'
+						'hsl'
+						. (
+							$isAlphaUsed
+							? 'a'
+							: ''
+						)
+						. '('
+						. $resultColorHsl->h . ','
+						. $resultColorHsl->s . '%,'
+						. $resultColorHsl->l . '%'
+						. (
+							$isAlphaUsed
+							? $resultColorHsl->a . '%'
+							: ''
+						)
+						. ')'
 					;
 				break;
 				
@@ -225,13 +258,22 @@ class Snippet extends \DDTools\Snippet {
 					);
 					
 					$result =
-						'rgb(' .
-						$result->r .
-						',' .
-						$result->g .
-						',' .
-						$result->b .
-						')'
+						'rgb('
+						. (
+							$isAlphaUsed
+							? 'a'
+							: ''
+						)
+						. '('
+						. $result->r . ','
+						. $result->g . ','
+						. $result->b
+						. (
+							$isAlphaUsed
+							? $result->a
+							: ''
+						)
+						. ')'
 					;
 				break;
 			}
@@ -242,6 +284,7 @@ class Snippet extends \DDTools\Snippet {
 					'ddH' => $resultColorHsl->h,
 					'ddS' => $resultColorHsl->s,
 					'ddL' => $resultColorHsl->l,
+					'ddA' => $resultColorHsl->a,
 					'ddIsDark' => intval(
 						static::isRgbDark(
 							static::hsbToRgb(
@@ -273,7 +316,7 @@ class Snippet extends \DDTools\Snippet {
 	
 	/**
 	 * stringToHsl
-	 * @version 1.0 (2023-03-10)
+	 * @version 1.1 (2024-01-19)
 	 * 
 	 * @param $paramString {string} — Color string in the HEX, HSL or HSB/HSV formats. @required
 	 * 
@@ -281,6 +324,7 @@ class Snippet extends \DDTools\Snippet {
 	 * @return $result->h {integer}
 	 * @return $result->s {integer}
 	 * @return $result->l {integer}
+	 * @return $result->a {integer} — Can be absent.
 	 */
 	private static function stringToHsl($paramString): \stdClass {
 		//If input color set as HSL || HSB/HSV
@@ -301,8 +345,11 @@ class Snippet extends \DDTools\Snippet {
 			//Remove unwanted chars
 			$paramString = str_replace(
 				[
+					'hsla',
 					'hsl',
+					'hsba',
 					'hsb',
+					'hsva',
 					'hsv',
 					'%',
 					'(',
@@ -336,6 +383,16 @@ class Snippet extends \DDTools\Snippet {
 					'b' => $paramString[2]
 				]);
 			}
+			
+			//Alpha-channel
+			if (
+				\DDTools\ObjectTools::isPropExists([
+					'object' => $paramString,
+					'propName' => 3
+				])
+			){
+				$resultHsl->a = $paramString[3];
+			}
 		//AS RGB
 		}else{
 			//Удалим из цвета символ '#'
@@ -349,35 +406,71 @@ class Snippet extends \DDTools\Snippet {
 			$resultHsl = static::hexToHsl($paramString);
 		}
 		
+		//Alpha-channel
+		if (
+			\DDTools\ObjectTools::isPropExists([
+				'object' => $resultHsl,
+				'propName' => 'a'
+			])
+		){
+			if ($resultHsl->a < 1){
+				$resultHsl->a = $resultHsl->a * 100;
+			}
+			
+			if (
+				!is_numeric($resultHsl->a) ||
+				$resultHsl->a == 100
+			){
+				unset($resultHsl->a);
+			}
+		}
+		
 		return $resultHsl;
 	}
 	
 	/**
 	 * hexToHsl
-	 * @version 3.0.1 (2023-03-10$this->params->inputColor$hex {string} — Color in HEX format without first '#'. @required
+	 * @version 3.1 (2024-01-19)
+	 * 
+	 * @param $hexString {string} — Color in HEX format without first '#'. @required
 	 * 
 	 * @return $result {stdClass}
 	 * @return $result->h {integer}
 	 * @return $result->s {integer}
 	 * @return $result->l {integer}
+	 * @return $result->a {integer} — Can be absent.
 	 */
-	private static function hexToHsl($hex): \stdClass {
+	private static function hexToHsl($hexString): \stdClass {
+		$resultHsl = new \stdClass();
+		
 		//Получаем цвета в 10чной системе
 		$red = hexdec(substr(
-			$hex,
+			$hexString,
 			0,
 			2
 		));
 		$green = hexdec(substr(
-			$hex,
+			$hexString,
 			2,
 			2
 		));
 		$blue = hexdec(substr(
-			$hex,
+			$hexString,
 			4,
 			2
 		));
+		$alpha = substr(
+			$hexString,
+			6,
+			2
+		);
+		if (!empty($alpha)){
+			$resultHsl->a =
+				hexdec($alpha)
+				/ 255
+				* 100
+			;
+		}
 		
 		//Находим максимальное и минимальное значения
 		$max = max(
@@ -390,8 +483,6 @@ class Snippet extends \DDTools\Snippet {
 			$green,
 			$blue
 		);
-		
-		$resultHsl = new \stdClass();
 		
 		//Вычисляем яркость (от 0 до 100)
 		$resultHsl->l = round(
@@ -456,17 +547,19 @@ class Snippet extends \DDTools\Snippet {
 	
 	/**
 	 * hsbToRgb
-	 * @version 2.0.1 (2023-03-10)
+	 * @version 2.1 (2024-01-19)
 	 * 
 	 * @param $paramHsb {stdClass|arrayAssociative} — Color in HSB format. @required
 	 * @param $paramHsb->h {integer} — Hue. @required
 	 * @param $paramHsb->s {integer} — Saturation. @required
 	 * @param $paramHsb->b {integer} — Brightness. @required
+	 * @param $paramHsb->a {integer} — Alpha-channel. Default —.
 	 * 
 	 * @return $result {stdClass}
 	 * @return $result->r {integer}
 	 * @return $result->g {integer}
 	 * @return $result->b {integer}
+	 * @return $result->a {integer} — Can be absent.
 	 */
 	private static function hsbToRgb($paramHsb): \stdClass {
 		$paramHsb = (object) $paramHsb;
@@ -538,6 +631,20 @@ class Snippet extends \DDTools\Snippet {
 			}
 		}
 		
+		if (
+			\DDTools\ObjectTools::isPropExists([
+				'object' => $paramHsb,
+				'propName' => 'a'
+			])
+			&& $paramHsb->a < 100
+		){
+			$resultRgb->a = $paramHsb->a;
+			
+			if ($resultRgb->a < 1){
+				$resultRgb->a = $resultRgb->a * 100;
+			}
+		}
+		
 		//Переводим из системы счисления от 0 до 100 в от 0 до 255
 		foreach (
 			$resultRgb as
@@ -560,6 +667,7 @@ class Snippet extends \DDTools\Snippet {
 	 * @param $paramRgb->r {integer} — Hue. @required
 	 * @param $paramRgb->g {integer} — Saturation. @required
 	 * @param $paramRgb->b {integer} — Brightness. @required
+	 * @param $paramRgb->a {integer} — Alpha-channel. Default —.
 	 * 
 	 * @return $result {string}
 	 */
@@ -594,6 +702,7 @@ class Snippet extends \DDTools\Snippet {
 	 * @param $paramHsb->h {integer} — Hue. @required
 	 * @param $paramHsb->s {integer} — Saturation. @required
 	 * @param $paramHsb->b {integer} — Brightness. @required
+	 * @param $paramHsb->a {integer} — Alpha-channel. Default —.
 	 * 
 	 * @return $result {string}
 	 */
@@ -605,17 +714,19 @@ class Snippet extends \DDTools\Snippet {
 	
 	/**
 	 * hsbToHsl
-	 * @version 1.0 (2023-03-10)
+	 * @version 1.1 (2024-01-19)
 	 * 
 	 * @param $paramHsb {stdClass|arrayAssociative} — Color in HSB format. @required
 	 * @param $paramHsb->h {integer} — Hue. @required
 	 * @param $paramHsb->s {integer} — Saturation. @required
 	 * @param $paramHsb->b {integer} — Brightness. @required
+	 * @param $paramHsb->a {integer} — Alpha-channel. Default —.
 	 * 
 	 * @return $result {stdClass}
 	 * @return $result->h {integer}
 	 * @return $result->s {integer}
 	 * @return $result->l {integer}
+	 * @return $result->a {integer} — Can be absent.
 	 */
 	private static function hsbToHsl($paramHsb): \stdClass {
 		$paramHsb = (object) $paramHsb;
@@ -646,22 +757,38 @@ class Snippet extends \DDTools\Snippet {
 			}
 		}
 		
+		if (
+			\DDTools\ObjectTools::isPropExists([
+				'object' => $paramHsb,
+				'propName' => 'a'
+			])
+			&& $paramHsb->a < 100
+		){
+			$resultHsl->a = $paramHsb->a;
+			
+			if ($resultHsl->a < 1){
+				$resultHsl->a = $resultHsl->a * 100;
+			}
+		}
+		
 		return $resultHsl;
 	}
 	
 	/**
 	 * hslToHsb
-	 * @version 1.0 (2023-03-10)
+	 * @version 1.1 (2024-01-19)
 	 * 
 	 * @param $paramHsl {stdClass|arrayAssociative} — Color in HSL format. @required
 	 * @param $paramHsl->h {integer} — Hue. @required
 	 * @param $paramHsl->s {integer} — Saturation. @required
 	 * @param $paramHsl->l {integer} — Lightness. @required
+	 * @param $paramHsl->a {integer} — Alpha-channel. Default —.
 	 * 
 	 * @return $result {stdClass}
 	 * @return $result->h {integer}
 	 * @return $result->s {integer}
 	 * @return $result->b {integer}
+	 * @return $result->a {integer} — Can be absent.
 	 */
 	private static function hslToHsb($paramHsl): \stdClass {
 		$paramHsl = (object) $paramHsl;
@@ -690,6 +817,20 @@ class Snippet extends \DDTools\Snippet {
 			$resultHsb->s = intval(round(
 				200 * $temp / $resultHsb->b
 			));
+		}
+		
+		if (
+			\DDTools\ObjectTools::isPropExists([
+				'object' => $paramHsl,
+				'propName' => 'a'
+			])
+			&& $paramHsl->a < 100
+		){
+			$resultHsb->a = $paramHsl->a;
+			
+			if ($resultHsb->a < 1){
+				$resultHsb->a = $resultHsb->a * 100;
+			}
 		}
 		
 		return $resultHsb;
