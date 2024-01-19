@@ -2,11 +2,11 @@
 
 
 ## Версия 3.2 (2023-03-10)
-* \+ Parameters → `inputColor`: Supports values with alpha-channel.
-	* \+ `offset_a`: The new parameter. Allows you to modify alpha-channel.
-	* \+ `result_tpl` → Placeholders → `[+ddA+]`: The new placeholder.
-* \* `\ddTools::getTpl` is used instead of `$modx->getTpl`.
-* \* Attention! (MODX)EvolutionCMS.libraries.ddTools >= 0.60 is required.
+* \+ Параметры → `inputColor`: Поддерживает занчения с альфа-каналом.
+	* \+ `offset_a`: Новый параметр. Позволяет модифицировать альфа-канал.
+	* \+ `result_tpl` → Плейсхолдеры → `[+ddA+]`: Новый плейсхолдер.
+* \* `\ddTools::getTpl` используется вместо `$modx->getTpl`.
+* \* Внимание! Требуется (MODX)EvolutionCMS.libraries.ddTools >= 0.60 is.
 
 
 ## Версия 3.1 (2023-03-10)
