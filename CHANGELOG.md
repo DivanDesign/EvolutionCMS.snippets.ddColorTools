@@ -1,6 +1,14 @@
 # (MODX)EvolutionCMS.snippets.ddColorTools changelog
 
 
+## Version 3.2 (2023-03-10)
+* \+ Parameters → `inputColor`: Supports values with alpha-channel.
+	* \+ `offset_a`: The new parameter. Allows you to modify alpha-channel.
+	* \+ `result_tpl` → Placeholders → `[+ddA+]`: The new placeholder.
+* \* `\ddTools::getTpl` is used instead of `$modx->getTpl`.
+* \* Attention! (MODX)EvolutionCMS.libraries.ddTools >= 0.60 is required.
+
+
 ## Version 3.1 (2023-03-10)
 * \* Attention! (MODX)EvolutionCMS.libraries.ddTools >= 0.57 is required.
 * \* Attention! (MODX)EvolutionCMS.snippets.ddGetDocumentField >= 2.11.1 is required.
