@@ -81,7 +81,7 @@ class Snippet extends \DDTools\Snippet {
 	
 	/**
 	 * run
-	 * @version 1.5.1 (2024-01-20)
+	 * @version 1.5.2 (2024-01-20)
 	 * 
 	 * @return {string}
 	 */
@@ -114,7 +114,10 @@ class Snippet extends \DDTools\Snippet {
 			
 			if (
 				!$isAlphaUsed
-				&& $this->params->offset_a != '+0'
+				&& (
+					count($this->params->offset_a) > 1
+					|| $this->params->offset_a[0] != '+0'
+				)
 			){
 				$isAlphaUsed = true;
 				
