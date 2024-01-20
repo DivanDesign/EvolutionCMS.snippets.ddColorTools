@@ -3,7 +3,7 @@ namespace ddColorTools;
 
 class Snippet extends \DDTools\Snippet {
 	protected
-		$version = '3.2.0',
+		$version = '3.2.1',
 		
 		$params = [
 			//Defaults
