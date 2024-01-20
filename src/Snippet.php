@@ -81,7 +81,7 @@ class Snippet extends \DDTools\Snippet {
 	
 	/**
 	 * run
-	 * @version 1.5 (2024-01-19)
+	 * @version 1.5.1 (2024-01-20)
 	 * 
 	 * @return {string}
 	 */
@@ -239,7 +239,7 @@ class Snippet extends \DDTools\Snippet {
 						. $resultColorHsl->l . '%'
 						. (
 							$isAlphaUsed
-							? $resultColorHsl->a . '%'
+							? ',' . $resultColorHsl->a . '%'
 							: ''
 						)
 						. ')'
@@ -270,7 +270,7 @@ class Snippet extends \DDTools\Snippet {
 						. $result->b
 						. (
 							$isAlphaUsed
-							? $result->a
+							? ',' . $result->a
 							: ''
 						)
 						. ')'
