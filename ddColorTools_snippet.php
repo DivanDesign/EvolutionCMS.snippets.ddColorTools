@@ -1,7 +1,7 @@
 <?php
 /**
  * ddColorTools
- * @version 3.2 (2023-03-10)
+ * @version 3.2.1 (2024-01-20)
  * 
  * @see README.md
  * 

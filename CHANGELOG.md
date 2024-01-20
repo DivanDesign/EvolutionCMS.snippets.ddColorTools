@@ -1,7 +1,13 @@
 # (MODX)EvolutionCMS.snippets.ddColorTools changelog
 
 
-## Version 3.2 (2023-03-10)
+## Version 3.2.1 (2024-01-20)
+* \* Outputter:
+	* \* Incorrect output of `hsla`/`rgba` have been fixed.
+	* \* Alpha-channel is not outputted if it is equal to `100%`.
+
+
+## Version 3.2 (2024-01-20)
 * \+ Parameters → `inputColor`: Supports values with alpha-channel.
 	* \+ `offset_a`: The new parameter. Allows you to modify alpha-channel.
 	* \+ `result_tpl` → Placeholders → `[+ddA+]`: The new placeholder.
