@@ -6,7 +6,7 @@ class Snippet extends \DDTools\Snippet {
 		$version = '3.2.1',
 		
 		$params = [
-			//Defaults
+			// Defaults
 			'inputColor' => '',
 			'inputColor_docField' => null,
 			'inputColor_docId' => null,
@@ -26,17 +26,17 @@ class Snippet extends \DDTools\Snippet {
 		
 	/**
 	 * prepareParams
-	 * @version 1.1 (2024-01-19)
+	 * @version 1.1.1 (2024-08-06)
 	 * 
 	 * @param $this->params {stdClass|arrayAssociative|stringJsonObject|stringHjsonObject|stringQueryFormatted}
 	 * 
 	 * @return {void}
 	 */
 	protected function prepareParams($paramsRenameMe = []){
-		//Call base method
+		// Call base method
 		parent::prepareParams($paramsRenameMe);
 		
-		//Если задано имя поля, которое необходимо получить
+		// Если задано имя поля, которое необходимо получить
 		if(!empty($this->params->inputColor_docField)){
 			$this->params->inputColor = \DDTools\Snippet::runSnippet([
 				'name' => 'ddGetDocumentField',
@@ -49,7 +49,7 @@ class Snippet extends \DDTools\Snippet {
 			]);
 		}
 		
-		//Case-insensitive
+		// Case-insensitive
 		foreach (
 			[
 				'inputColor',
@@ -60,7 +60,7 @@ class Snippet extends \DDTools\Snippet {
 			$this->params->{$paramName} = strtolower($this->params->{$paramName});
 		}
 		
-		//Comma separated strings
+		// Comma separated strings
 		foreach (
 			[
 				'offset_h',
@@ -81,15 +81,15 @@ class Snippet extends \DDTools\Snippet {
 	
 	/**
 	 * run
-	 * @version 1.5.2 (2024-01-20)
+	 * @version 1.5.3 (2024-08-06)
 	 * 
 	 * @return {string}
 	 */
 	public function run(){
-		//The snippet must return an empty string even if result is absent
+		// The snippet must return an empty string even if result is absent
 		$result = '';
 		
-		//Required parameter
+		// Required parameter
 		if(!empty($this->params->inputColor)){
 			$hslRange = (object) [
 				'h' => $this->params->offset_h,
@@ -144,7 +144,7 @@ class Snippet extends \DDTools\Snippet {
 						$operation
 					);
 					
-					//Если нужно прибавить
+					// Если нужно прибавить
 					if(
 						strpos(
 							$operation_sign,
@@ -153,7 +153,7 @@ class Snippet extends \DDTools\Snippet {
 						false
 					){
 						$resultColorHsl->{$key} += $operation;
-					//Если нужно отнять
+					// Если нужно отнять
 					}elseif(
 						strpos(
 							$operation_sign,
@@ -162,12 +162,12 @@ class Snippet extends \DDTools\Snippet {
 						false
 					){
 						$resultColorHsl->{$key} -= $operation;
-					//Если нужно приравнять (если есть хоть какое-то число)
+					// Если нужно приравнять (если есть хоть какое-то число)
 					}elseif(strlen($operation) > 0){
 						$resultColorHsl->{$key} = $operation;
 					}
 					
-					//Если нужно задать максимальное, либо минимальное значение
+					// Если нужно задать максимальное, либо минимальное значение
 					if(
 						strpos(
 							$operation_sign,
@@ -175,7 +175,7 @@ class Snippet extends \DDTools\Snippet {
 						) !==
 						false
 					){
-						//Если меньше 50% — 0, в противном случае — максимальное значение
+						// Если меньше 50% — 0, в противном случае — максимальное значение
 						$resultColorHsl->{$key} =
 							(
 								$resultColorHsl->{$key} <
@@ -186,7 +186,7 @@ class Snippet extends \DDTools\Snippet {
 						;
 					}
 					
-					//Если нужно инвертировать
+					// Если нужно инвертировать
 					if(
 						strpos(
 							$operation_sign,
@@ -200,7 +200,7 @@ class Snippet extends \DDTools\Snippet {
 						;
 					}
 					
-					//Обрабатываем слишком маленькие значения
+					// Обрабатываем слишком маленькие значения
 					if($resultColorHsl->{$key} < 0){
 						$resultColorHsl->{$key} =
 							$hslMax->{$key} +
@@ -210,7 +210,7 @@ class Snippet extends \DDTools\Snippet {
 				}
 			}
 			
-			//Обрабатываем слишком большие значения
+			// Обрабатываем слишком большие значения
 			if($resultColorHsl->h > $hslMax->h){
 				$resultColorHsl->h = $resultColorHsl->h - $hslMax->h;
 			}
@@ -297,7 +297,7 @@ class Snippet extends \DDTools\Snippet {
 					)
 				];
 				
-				//Если есть дополнительные данные
+				// Если есть дополнительные данные
 				if (!empty($this->params->result_tpl_placeholders)){
 					$result = \DDTools\ObjectTools::extend([
 						'objects' => [
@@ -319,7 +319,7 @@ class Snippet extends \DDTools\Snippet {
 	
 	/**
 	 * stringToHsl
-	 * @version 1.1 (2024-01-19)
+	 * @version 1.1.1 (2024-08-06)
 	 * 
 	 * @param $paramString {string} — Color string in the HEX, HSL or HSB/HSV formats. @required
 	 * 
@@ -330,7 +330,7 @@ class Snippet extends \DDTools\Snippet {
 	 * @return $result->a {integer} — Can be absent.
 	 */
 	private static function stringToHsl($paramString): \stdClass {
-		//If input color set as HSL || HSB/HSV
+		// If input color set as HSL || HSB/HSV
 		if (
 			strpos(
 				$paramString,
@@ -345,7 +345,7 @@ class Snippet extends \DDTools\Snippet {
 				false
 			;
 			
-			//Remove unwanted chars
+			// Remove unwanted chars
 			$paramString = str_replace(
 				[
 					'hsla',
@@ -357,9 +357,9 @@ class Snippet extends \DDTools\Snippet {
 					'%',
 					'(',
 					')',
-					//Space
+					// Space
 					' ',
-					//Tab
+					// Tab
 					'	'
 				],
 				'',
@@ -371,14 +371,14 @@ class Snippet extends \DDTools\Snippet {
 				$paramString
 			);
 			
-			//If input color set as HSL
+			// If input color set as HSL
 			if ($isInputColorHsl){
 				$resultHsl = (object) [
 					'h' => $paramString[0],
 					's' => $paramString[1],
 					'l' => $paramString[2]
 				];
-			//As HSB/HSV	
+			// As HSB/HSV	
 			}else{
 				$resultHsl = static::hsbToHsl([
 					'h' => $paramString[0],
@@ -387,7 +387,7 @@ class Snippet extends \DDTools\Snippet {
 				]);
 			}
 			
-			//Alpha-channel
+			// Alpha-channel
 			if (
 				\DDTools\ObjectTools::isPropExists([
 					'object' => $paramString,
@@ -396,20 +396,20 @@ class Snippet extends \DDTools\Snippet {
 			){
 				$resultHsl->a = $paramString[3];
 			}
-		//AS RGB
+		// AS RGB
 		}else{
-			//Удалим из цвета символ '#'
+			// Удалим из цвета символ '#'
 			$paramString = str_replace(
 				'#',
 				'',
 				$paramString
 			);
 			
-			//Преобразуем цвет в HSL
+			// Преобразуем цвет в HSL
 			$resultHsl = static::hexToHsl($paramString);
 		}
 		
-		//Alpha-channel
+		// Alpha-channel
 		if (
 			\DDTools\ObjectTools::isPropExists([
 				'object' => $resultHsl,
@@ -433,7 +433,7 @@ class Snippet extends \DDTools\Snippet {
 	
 	/**
 	 * hexToHsl
-	 * @version 3.1 (2024-01-19)
+	 * @version 3.1.1 (2024-08-06)
 	 * 
 	 * @param $hexString {string} — Color in HEX format without first '#'. @required
 	 * 
@@ -446,7 +446,7 @@ class Snippet extends \DDTools\Snippet {
 	private static function hexToHsl($hexString): \stdClass {
 		$resultHsl = new \stdClass();
 		
-		//Получаем цвета в 10чной системе
+		// Получаем цвета в 10чной системе
 		$red = hexdec(substr(
 			$hexString,
 			0,
@@ -475,7 +475,7 @@ class Snippet extends \DDTools\Snippet {
 			;
 		}
 		
-		//Находим максимальное и минимальное значения
+		// Находим максимальное и минимальное значения
 		$max = max(
 			$red,
 			$green,
@@ -487,17 +487,17 @@ class Snippet extends \DDTools\Snippet {
 			$blue
 		);
 		
-		//Вычисляем яркость (от 0 до 100)
+		// Вычисляем яркость (от 0 до 100)
 		$resultHsl->l = round(
 			($max + $min) / 2 * 100 / 255
 		);
 		
-		//Если цвет серый
+		// Если цвет серый
 		if($max == $min){
 			$resultHsl->s = 0;
 			$resultHsl->h = 0;
 		}else{
-			//Вычисляем насыщенность
+			// Вычисляем насыщенность
 			$resultHsl->s = round(
 				(
 					$resultHsl->l > 50 ?
@@ -513,7 +513,7 @@ class Snippet extends \DDTools\Snippet {
 				100
 			);
 			
-			//Вычисляем тон
+			// Вычисляем тон
 			$hue = 0;
 			$tmpR =
 				($max - $red) /
@@ -550,7 +550,7 @@ class Snippet extends \DDTools\Snippet {
 	
 	/**
 	 * hsbToRgb
-	 * @version 2.1 (2024-01-19)
+	 * @version 2.1.1 (2024-08-06)
 	 * 
 	 * @param $paramHsb {stdClass|arrayAssociative} — Color in HSB format. @required
 	 * @param $paramHsb->h {integer} — Hue. @required
@@ -572,7 +572,7 @@ class Snippet extends \DDTools\Snippet {
 		
 		$resultRgb = new \stdClass();
 		
-		//Если цвет серый
+		// Если цвет серый
 		if($saturation == 0){
 			$resultRgb->r = $brightness;
 			$resultRgb->g = $brightness;
@@ -648,7 +648,7 @@ class Snippet extends \DDTools\Snippet {
 			}
 		}
 		
-		//Переводим из системы счисления от 0 до 100 в от 0 до 255
+		// Переводим из системы счисления от 0 до 100 в от 0 до 255
 		foreach (
 			$resultRgb as
 			$key =>
@@ -664,7 +664,7 @@ class Snippet extends \DDTools\Snippet {
 	
 	/**
 	 * rgbToHex
-	 * @version 1.0 (2023-03-10)
+	 * @version 1.0.1 (2024-08-06)
 	 * 
 	 * @param $paramRgb {stdClass|arrayAssociative} — Color in RGB format. @required
 	 * @param $paramRgb->r {integer} — Hue. @required
@@ -677,7 +677,7 @@ class Snippet extends \DDTools\Snippet {
 	private static function rgbToHex($paramRgb): string {
 		$paramRgb = (object) $paramRgb;
 		
-		//Обходим массив и преобразовываем все значения в hex
+		// Обходим массив и преобразовываем все значения в hex
 		foreach (
 			$paramRgb as
 			$key =>
@@ -685,7 +685,7 @@ class Snippet extends \DDTools\Snippet {
 		){
 			$paramRgb->{$key} = dechex($val);
 			
-			//Если не хватает ноля, дописываем
+			// Если не хватает ноля, дописываем
 			if (strlen($paramRgb->{$key}) < 2){
 				$paramRgb->{$key} = '0' . $paramRgb->{$key};
 			}
@@ -717,7 +717,7 @@ class Snippet extends \DDTools\Snippet {
 	
 	/**
 	 * hsbToHsl
-	 * @version 1.1 (2024-01-19)
+	 * @version 1.1.1 (2024-08-06)
 	 * 
 	 * @param $paramHsb {stdClass|arrayAssociative} — Color in HSB format. @required
 	 * @param $paramHsb->h {integer} — Hue. @required
@@ -737,7 +737,7 @@ class Snippet extends \DDTools\Snippet {
 		$resultHsl = (object) [
 			'h' => $paramHsb->h,
 			's' => $paramHsb->s,
-			//Determine the lightness in the range [0, 100]
+			// Determine the lightness in the range [0, 100]
 			'l' => intval(
 				(2 - $paramHsb->s / 100) *
 				$paramHsb->b /
@@ -841,7 +841,7 @@ class Snippet extends \DDTools\Snippet {
 	
 	/**
 	 * isRgbDark
-	 * @version 1.0 (2023-03-10)
+	 * @version 1.0.1 (2024-08-06)
 	 * 
 	 * @param $paramRgb {stdClass|arrayAssociative} — Color in RGB format. @required
 	 * @param $paramRgb->r {integer} — Red. @required
@@ -853,7 +853,7 @@ class Snippet extends \DDTools\Snippet {
 	private static function isRgbDark($paramRgb): bool {
 		$paramRgb = (object) $paramRgb;
 		
-		//Calc luma by W3C method (https://www.w3.org/TR/AERT/#color-contrast)
+		// Calc luma by W3C method (https://www.w3.org/TR/AERT/#color-contrast)
 		$luma = 
 			(
 				$paramRgb->r * 29.9 +

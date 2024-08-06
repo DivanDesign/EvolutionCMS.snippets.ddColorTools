@@ -36,13 +36,13 @@ Converts the color to match the offset in tone, brightness, or saturation.
 Just run the following PHP code in your sources or [Console](https://github.com/vanchelo/MODX-Evolution-Ajax-Console):
 
 ```php
-//Include (MODX)EvolutionCMS.libraries.ddInstaller
+// Include (MODX)EvolutionCMS.libraries.ddInstaller
 require_once(
 	$modx->getConfig('base_path') .
 	'assets/libs/ddInstaller/require.php'
 );
 
-//Install (MODX)EvolutionCMS.snippets.ddColorTools
+// Install (MODX)EvolutionCMS.snippets.ddColorTools
 \DDInstaller::install([
 	'url' => 'https://github.com/DivanDesign/EvolutionCMS.snippets.ddColorTools',
 	'type' => 'snippet'
@@ -213,13 +213,13 @@ hsl(0, 0%, [[ddIf?
 ### Run the snippet through `\DDTools\Snippet::runSnippet` without DB and eval
 
 ```php
-//Include (MODX)EvolutionCMS.libraries.ddTools
+// Include (MODX)EvolutionCMS.libraries.ddTools
 require_once(
 	$modx->getConfig('base_path') .
 	'assets/libs/ddTools/modx.ddtools.class.php'
 );
 
-//Run (MODX)EvolutionCMS.snippets.ddColorTools
+// Run (MODX)EvolutionCMS.snippets.ddColorTools
 \DDTools\Snippet::runSnippet([
 	'name' => 'ddColorTools',
 	'params' => [
